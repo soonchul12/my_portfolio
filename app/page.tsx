@@ -291,7 +291,7 @@ export default function Portfolio() {
         </motion.div>
 
         {/* 하단 스크롤 유도 아이콘 */}
-        <motion.div 
+        {/* <motion.div 
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 1.5 }}
           className="absolute bottom-10 left-1/2 -translate-x-1/2"
@@ -299,7 +299,7 @@ export default function Portfolio() {
           <div className="w-6 h-10 border-2 border-gray-500 rounded-full flex justify-center pt-2">
             <div className="w-1 h-2 bg-white rounded-full" />
           </div>
-        </motion.div>
+        </motion.div> */}
       </section>
 
       {/* 2. 경력 섹션 (Timeline) */}
