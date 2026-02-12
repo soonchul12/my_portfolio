@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { Code, Cpu, Layers, Rocket, ExternalLink, Mail, Github } from "lucide-react";
 import { useMousePosition } from "./hooks/useMousePosition";
 
@@ -30,6 +30,12 @@ const marqueeSkills = [
   "React", "TypeScript", "Next.js", "AI Tools", "Tailwind CSS",
   "UX Design", "Marketing", "Web Development", "Java Script"
 ];
+
+// 연락처 정보 (이메일 / 전화번호) - 필요 시 여기만 수정
+const CONTACT_INFO = {
+  email: "yeyiyeyi@naver.com",
+  phone: "010-5501-2760",
+};
 
 const projects = [
   {
@@ -60,16 +66,22 @@ const projects = [
 
 // --- 컴포넌트 섹션 ---
 
-/** Gyöngy 스타일 무한 마키 스크롤 애니메이션 */
+/** Gyöngy 스타일 무한 마키 - 호버 시 속도 업 (인터랙티브) */
 function MarqueeScroller({ items, duration = 15 }: { items: string[]; duration?: number }) {
+  const [isHovered, setIsHovered] = useState(false);
   const duplicatedItems = [...items, ...items];
+  const speed = isHovered ? duration * 0.4 : duration; // 호버 시 2.5배 빠르게
   return (
-    <div className="w-full overflow-hidden py-3 border-y border-white/5">
+    <div
+      className="w-full overflow-hidden py-3 border-y border-white/5"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <motion.div
         className="flex gap-12 whitespace-nowrap w-max"
         animate={{ x: "-50%" }}
         transition={{
-          x: { repeat: Infinity, repeatType: "loop", duration, ease: "linear" },
+          x: { repeat: Infinity, repeatType: "loop", duration: speed, ease: "linear" },
         }}
       >
         {duplicatedItems.map((item, i) => (
@@ -136,11 +148,85 @@ function SelfIntroCard({
   );
 }
 
+/** 프로젝트 카드 - 호버 시 마우스 따라 3D 틸트 (더 뚜렷하게) */
+function ProjectCard({
+  project,
+  index,
+  mousePosition,
+}: {
+  project: (typeof projects)[0];
+  index: number;
+  mousePosition: { x: number; y: number };
+  windowSize?: { w: number; h: number };
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    if (!cardRef.current || !isHovered) {
+      setTilt({ x: 0, y: 0 });
+      return;
+    }
+    const rect = cardRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    // 더 뚜렷한 틸트: 거리당 각도 키움 (÷8), 최대 ±14도
+    const rotX = (mousePosition.y - centerY) / 8;
+    const rotY = (mousePosition.x - centerX) / -8;
+    setTilt({
+      x: Math.max(-14, Math.min(14, rotX)),
+      y: Math.max(-14, Math.min(14, rotY)),
+    });
+  }, [mousePosition, isHovered]);
+
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ delay: index * 0.2 }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="group relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:border-purple-500/50 transition-all duration-300"
+      style={{
+        transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+        transformStyle: "preserve-3d",
+        transition: "transform 0.15s ease-out",
+      }}
+    >
+      <div className="h-full">
+        <div className="h-48 bg-gray-800 overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] to-transparent z-10" />
+          <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+        </div>
+        <div className="p-6 relative z-20">
+          <h3 className="text-2xl font-bold mb-2 group-hover:text-purple-400 transition-colors">{project.title}</h3>
+          <p className="text-gray-400 mb-4 h-12">{project.desc}</p>
+          <div className="flex flex-wrap gap-2 mb-6">
+            {project.tags.map((tag) => (
+              <span key={tag} className="text-xs font-semibold px-2 py-1 rounded bg-purple-500/20 text-purple-300">
+                #{tag}
+              </span>
+            ))}
+          </div>
+          <a href={project.link} className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all">
+            View Project <ExternalLink className="w-4 h-4" />
+          </a>
+        </div>
+        <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500 -z-10" />
+      </div>
+    </motion.div>
+  );
+}
+
 export default function Portfolio() {
   const targetRef = useRef(null);
   const { scrollYProgress } = useScroll();
   const mousePosition = useMousePosition();
   const [windowSize, setWindowSize] = useState({ w: 1920, h: 1080 });
+  const [isContactOpen, setIsContactOpen] = useState(false);
 
   useEffect(() => {
     setWindowSize({ w: window.innerWidth, h: window.innerHeight });
@@ -169,27 +255,80 @@ export default function Portfolio() {
         }}
       />
       
-      {/* 배경 그라디언트 효과 (보라색 오로라) */}
-      <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
+      {/* 배경 그라디언트 + 플로팅 오브 (천천히 움직이는 원형) */}
+      <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
         <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[100px]" />
+        {/* 플로팅 오브 3개 - 각각 다른 속도/방향 */}
+        <motion.div
+          className="absolute w-72 h-72 rounded-full bg-purple-500/10 blur-[80px]"
+          style={{ top: "20%", left: "10%" }}
+          animate={{
+            x: [0, 40, -20, 0],
+            y: [0, -30, 20, 0],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute w-96 h-96 rounded-full bg-pink-500/10 blur-[90px]"
+          style={{ top: "60%", right: "5%" }}
+          animate={{
+            x: [0, -50, 30, 0],
+            y: [0, 25, -15, 0],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute w-64 h-64 rounded-full bg-blue-500/10 blur-[70px]"
+          style={{ bottom: "25%", left: "20%" }}
+          animate={{
+            x: [0, 30, -40, 0],
+            y: [0, -20, 35, 0],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
       </div>
 
-      {/* 네비게이션 */}
+      {/* 네비게이션 - 로고 그라디언트 + 연락처 모달 트리거 */}
       <nav className="fixed top-0 w-full z-50 backdrop-blur-md border-b border-white/10 px-6 py-4 flex justify-between items-center">
-        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
+        <motion.span
+          className="text-xl font-bold bg-clip-text text-transparent bg-[length:200%_auto]"
+          style={{
+            backgroundImage: "linear-gradient(90deg, #c084fc, #f472b6, #c084fc)",
+            backgroundPosition: "0% 50%",
+          }}
+          animate={{ backgroundPosition: ["0% 50%", "100% 50%"] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+        >
           권순철 포트폴리오
-        </span>
-        <div className="flex gap-4">
-          <Github className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer transition-colors" />
-          <Mail className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer transition-colors" />
+        </motion.span>
+        <div className="flex gap-4 items-center">
+          <a
+            href="https://github.com/soonchul12"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-400 hover:text-white transition-colors"
+            aria-label="GitHub"
+          >
+            <Github className="w-5 h-5" />
+          </a>
+          <button
+            type="button"
+            onClick={() => setIsContactOpen(true)}
+            className="text-gray-400 hover:text-white transition-colors"
+            aria-label="이메일 / 연락처 열기"
+          >
+            <Mail className="w-5 h-5" />
+          </button>
         </div>
       </nav>
 
-      {/* Gyöngy 스타일: 큰 배경 텍스트 (스크롤 파라럭스) */}
+      {/* Gyöngy 스타일: 큰 배경 텍스트 (스크롤 파라럭스 + 그라디언트 흐름) */}
       <motion.div
-        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[15vw] md:text-[20vw] font-black text-white/[0.03] pointer-events-none z-0 select-none"
+        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[15vw] md:text-[20vw] font-black pointer-events-none z-0 select-none bg-clip-text text-transparent bg-gradient-to-r from-white/[0.02] via-purple-500/[0.06] to-white/[0.02] bg-[length:200%_100%]"
         style={{ y: bgTextY }}
+        animate={{ backgroundPosition: ["0% 50%", "100% 50%"] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
       >
         BUILD
       </motion.div>
@@ -241,18 +380,29 @@ export default function Portfolio() {
           >
             Hi, I&apos;m
           </motion.p>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="text-4xl md:text-6xl font-extrabold mb-2 leading-tight text-left"
-          >
-            AI-Augmented Developer
-          </motion.h1>
+          {/* 타이틀 단어별 스태거 + 살짝 바운스 */}
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-2 leading-tight text-left overflow-hidden">
+            {"AI-Augmented Developer".split(" ").map((word, i) => (
+              <motion.span
+                key={i}
+                initial={{ opacity: 0, y: 28 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  delay: 0.35 + i * 0.12,
+                  type: "spring",
+                  stiffness: 120,
+                  damping: 14,
+                }}
+                className="inline-block mr-[0.25em]"
+              >
+                {word}
+              </motion.span>
+            ))}
+          </h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
+            transition={{ delay: 0.8, type: "spring", stiffness: 100 }}
             className="text-2xl md:text-3xl font-bold mb-6 text-purple-300/90 italic"
           >
             open to create
@@ -297,28 +447,27 @@ export default function Portfolio() {
           </div> */}
         </motion.div>
 
-        {/* 하단 스크롤 유도 아이콘 */}
-        {/* <motion.div 
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2"
-        >
-          <div className="w-6 h-10 border-2 border-gray-500 rounded-full flex justify-center pt-2">
-            <div className="w-1 h-2 bg-white rounded-full" />
-          </div>
-        </motion.div> */}
       </section>
 
-      {/* 2. 경력 섹션 (Timeline) */}
+      {/* 2. 경력 섹션 (Timeline) - 타이틀 언더라인 그리기 */}
       <section className="relative z-10 py-20 px-6 md:px-20 max-w-6xl mx-auto">
-        <motion.h2 
+        <motion.div
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="text-3xl md:text-4xl font-bold mb-16 flex items-center gap-3"
+          className="mb-16"
         >
-          <Rocket className="text-purple-400" /> Experience
-        </motion.h2>
+          <motion.h2 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
+            <Rocket className="text-purple-400" /> Experience
+          </motion.h2>
+          <motion.div
+            className="h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mt-2"
+            initial={{ width: 0 }}
+            whileInView={{ width: "120px" }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          />
+        </motion.div>
 
         <div className="relative border-l border-white/10 ml-4 md:ml-6 space-y-12">
           {experiences.map((exp, index) => (
@@ -350,67 +499,187 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* 3. 포트폴리오 섹션 (Glassmorphism Cards) */}
+      {/* 3. 포트폴리오 섹션 - 타이틀 언더라인 + 카드 3D 틸트 */}
       <section className="relative z-10 py-20 px-6 md:px-20 max-w-7xl mx-auto">
-        <motion.h2 
+        <motion.div
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          className="text-3xl md:text-4xl font-bold mb-12 flex items-center gap-3"
+          className="mb-12"
         >
-          <Layers className="text-blue-400" /> Projects
-        </motion.h2>
+          <motion.h2 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
+            <Layers className="text-blue-400" /> Projects
+          </motion.h2>
+          <motion.div
+            className="h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mt-2"
+            initial={{ width: 0 }}
+            whileInView={{ width: "100px" }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          />
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {projects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ delay: index * 0.2 }}
-              whileHover={{ scale: 1.02 }}
-              className="group relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:border-purple-500/50 transition-all duration-300"
-            >
-              {/* 이미지 영역 */}
-              <div className="h-48 bg-gray-800 overflow-hidden relative">
-                {/* 실제 이미지가  src에  수정필요 */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] to-transparent z-10" />
-                <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-              </div>
-
-              {/* 내용 영역 */}
-              <div className="p-6 relative z-20">
-                <h3 className="text-2xl font-bold mb-2 group-hover:text-purple-400 transition-colors">{project.title}</h3>
-                <p className="text-gray-400 mb-4 h-12">{project.desc}</p>
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {project.tags.map((tag) => (
-                    <span key={tag} className="text-xs font-semibold px-2 py-1 rounded bg-purple-500/20 text-purple-300">
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-                <a href={project.link} className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all">
-                  View Project <ExternalLink className="w-4 h-4" />
-                </a>
-              </div>
-              
-              {/* 호버 시 빛나는 효과 */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500 -z-10" />
-            </motion.div>
+            <ProjectCard key={project.id} project={project} index={index} mousePosition={mousePosition} windowSize={windowSize} />
           ))}
         </div>
       </section>
 
-      {/* 4. Contact Footer */}
+      {/* 4. Contact Footer - 버튼 호버 시 살짝 끌려오는 느낌 */}
       <footer className="relative z-10 py-20 text-center border-t border-white/10 mt-20 bg-black/40 backdrop-blur-lg">
-        <h2 className="text-3xl font-bold mb-6">Let's Build Together</h2>
+        <motion.h2
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-3xl font-bold mb-6"
+        >
+          Let&apos;s Build Together
+        </motion.h2>
         <p className="text-gray-400 mb-8">AI와 함께 더 빠르고 창의적인 웹을 만듭니다.</p>
-        <button className="px-8 py-3 rounded-full border border-white/20 hover:bg-white hover:text-black transition-all flex items-center gap-2 mx-auto">
+        <motion.button
+          type="button"
+          onClick={() => setIsContactOpen(true)}
+          className="px-8 py-3 rounded-full border border-white/20 hover:bg-white hover:text-black transition-colors flex items-center gap-2 mx-auto w-fit"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.98 }}
+        >
           <Mail className="w-4 h-4" /> Contact Me
-        </button>
+        </motion.button>
         <p className="text-gray-600 text-sm mt-12">© 2026 Developer Portfolio. All rights reserved.</p>
       </footer>
+
+      {/* 연락처 모달 - 세련된 명함 스타일 */}
+      <AnimatePresence>
+        {isContactOpen && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsContactOpen(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 40, scale: 0.9, rotateX: -15 }}
+              animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+              exit={{ opacity: 0, y: 30, scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 140, damping: 16 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-[320px] md:w-[380px] rounded-3xl border border-white/15 bg-gradient-to-br from-white/10 via-white/5 to-purple-500/10 shadow-[0_24px_80px_rgba(0,0,0,0.8)] overflow-hidden"
+            >
+              {/* 명함 상단 그라디언트 바 */}
+              <div className="h-1.5 bg-gradient-to-r from-purple-500 via-pink-400 to-blue-400" />
+
+              {/* 명함 본문 */}
+              <div className="p-6 md:p-7 relative">
+                {/* 배경 라인 애니메이션 */}
+                <motion.div
+                  className="pointer-events-none absolute inset-0 opacity-40"
+                  initial={{ backgroundPosition: "0% 0%" }}
+                  animate={{ backgroundPosition: ["0% 0%", "100% 100%"] }}
+                  transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(circle at 0 0, rgba(147, 197, 253, 0.25), transparent 55%), radial-gradient(circle at 100% 100%, rgba(196, 181, 253, 0.33), transparent 55%)",
+                    backgroundSize: "160% 160%",
+                  }}
+                />
+
+                <div className="relative flex flex-col gap-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-left">
+                      <p className="text-xs uppercase tracking-[0.22em] text-purple-300/80 mb-1">
+                        Frontend & Data
+                      </p>
+                      <h3 className="text-xl md:text-2xl font-semibold tracking-tight">
+                        권순철
+                      </h3>
+                      <p className="text-sm text-gray-300/90">
+                        AI-Augmented Developer
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-end gap-1 text-xs text-gray-400">
+                      <span className="px-2 py-0.5 rounded-full border border-white/15 bg-black/40">
+                        Portfolio
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-100">
+                        Open to work
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="h-px bg-gradient-to-r from-white/5 via-white/30 to-white/5 my-1" />
+
+                  <div className="space-y-3 text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-full bg-purple-500/20 flex items-center justify-center border border-purple-400/40">
+                        <Mail className="w-3.5 h-3.5 text-purple-200" />
+                      </div>
+                      <div className="flex flex-col text-left">
+                        <span className="text-[11px] uppercase tracking-[0.16em] text-gray-400">
+                          Email
+                        </span>
+                        <a
+                          href={`mailto:${CONTACT_INFO.email}`}
+                          className="font-medium text-gray-100 hover:text-purple-200 transition-colors"
+                        >
+                          {CONTACT_INFO.email}
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-full bg-blue-500/15 flex items-center justify-center border border-blue-400/40">
+                        <span className="w-3.5 h-3.5 rounded-sm border border-blue-200/70" />
+                      </div>
+                      <div className="flex flex-col text-left">
+                        <span className="text-[11px] uppercase tracking-[0.16em] text-gray-400">
+                          Phone
+                        </span>
+                        <span className="font-medium text-gray-100">
+                          {CONTACT_INFO.phone}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-full bg-gray-500/10 flex items-center justify-center border border-gray-400/40">
+                        <Github className="w-3.5 h-3.5 text-gray-200" />
+                      </div>
+                      <div className="flex flex-col text-left">
+                        <span className="text-[11px] uppercase tracking-[0.16em] text-gray-400">
+                          GitHub
+                        </span>
+                        <a
+                          href="https://github.com/soonchul12"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-gray-100 hover:text-purple-200 transition-colors"
+                        >
+                          github.com/soonchul12
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2">
+                    <span className="text-[11px] text-gray-400">
+                      AI와 함께 더 빠르고 정교하게.
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setIsContactOpen(false)}
+                      className="text-xs px-3 py-1.5 rounded-full border border-white/25 bg-white/5 hover:bg-white/15 text-gray-100 transition-colors"
+                    >
+                      닫기
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );
