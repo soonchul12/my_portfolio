@@ -148,79 +148,6 @@ function SelfIntroCard({
   );
 }
 
-/** 프로젝트 카드 - 호버 시 마우스 따라 3D 틸트 (더 뚜렷하게) */
-function ProjectCard({
-  project,
-  index,
-  mousePosition,
-}: {
-  project: (typeof projects)[0];
-  index: number;
-  mousePosition: { x: number; y: number };
-  windowSize?: { w: number; h: number };
-}) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
-
-  useEffect(() => {
-    if (!cardRef.current || !isHovered) {
-      setTilt({ x: 0, y: 0 });
-      return;
-    }
-    const rect = cardRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    // 더 뚜렷한 틸트: 거리당 각도 키움 (÷8), 최대 ±14도
-    const rotX = (mousePosition.y - centerY) / 8;
-    const rotY = (mousePosition.x - centerX) / -8;
-    setTilt({
-      x: Math.max(-14, Math.min(14, rotX)),
-      y: Math.max(-14, Math.min(14, rotY)),
-    });
-  }, [mousePosition, isHovered]);
-
-  return (
-    <motion.div
-      ref={cardRef}
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ delay: index * 0.2 }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="group relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm hover:border-purple-500/50 transition-all duration-300"
-      style={{
-        transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-        transformStyle: "preserve-3d",
-        transition: "transform 0.15s ease-out",
-      }}
-    >
-      <div className="h-full">
-        <div className="h-48 bg-gray-800 overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] to-transparent z-10" />
-          <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-        </div>
-        <div className="p-6 relative z-20">
-          <h3 className="text-2xl font-bold mb-2 group-hover:text-purple-400 transition-colors">{project.title}</h3>
-          <p className="text-gray-400 mb-4 h-12">{project.desc}</p>
-          <div className="flex flex-wrap gap-2 mb-6">
-            {project.tags.map((tag) => (
-              <span key={tag} className="text-xs font-semibold px-2 py-1 rounded bg-purple-500/20 text-purple-300">
-                #{tag}
-              </span>
-            ))}
-          </div>
-          <a href={project.link} className="inline-flex items-center gap-2 text-white font-medium hover:gap-3 transition-all">
-            View Project <ExternalLink className="w-4 h-4" />
-          </a>
-        </div>
-        <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500 -z-10" />
-      </div>
-    </motion.div>
-  );
-}
-
 export default function Portfolio() {
   const targetRef = useRef(null);
   const { scrollYProgress } = useScroll();
@@ -499,7 +426,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* 3. 포트폴리오 섹션 - 타이틀 언더라인 + 카드 3D 틸트 */}
+      {/* 3. 포트폴리오 섹션 - 세로 스텝 + 스크롤 업 애니메이션 */}
       <section className="relative z-10 py-20 px-6 md:px-20 max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -519,9 +446,79 @@ export default function Portfolio() {
           />
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="space-y-24">
           {projects.map((project, index) => (
-            <ProjectCard key={project.id} project={project} index={index} mousePosition={mousePosition} windowSize={windowSize} />
+            <motion.div
+              key={project.id}
+              initial={{ opacity: 0, y: 80 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.4 }}
+              transition={{ duration: 0.7, delay: index * 0.1, ease: "easeOut" }}
+              className="flex flex-col md:flex-row items-stretch gap-8 md:gap-12"
+            >
+              {/* 프로젝트 썸네일 카드 */}
+              <motion.div
+                className="md:w-1/2"
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: false, amount: 0.5 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <div className="relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm shadow-xl">
+                  <div className="h-56 md:h-64 bg-gray-900 overflow-hidden relative">
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] to-transparent z-10" />
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                    />
+                  </div>
+                  <div className="absolute inset-0 pointer-events-none opacity-0 hover:opacity-100 transition-opacity duration-500">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/40 via-pink-500/40 to-blue-500/40 blur-2xl" />
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* 프로젝트 설명 패널 */}
+              <motion.div
+                className="md:w-1/2 flex flex-col justify-center text-left space-y-4"
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: false, amount: 0.5 }}
+                transition={{ duration: 0.6, delay: 0.15 + index * 0.1 }}
+              >
+                <p className="text-xs uppercase tracking-[0.22em] text-blue-300/80">
+                  Project {index + 1}
+                </p>
+                <h3 className="text-2xl md:text-3xl font-bold mb-1">
+                  {project.title}
+                </h3>
+                <p className="text-gray-300 leading-relaxed">
+                  {project.desc}
+                </p>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {project.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-500/15 text-purple-200 border border-purple-400/30"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+                {project.link && project.link !== "#" && (
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm mt-4 text-blue-200 hover:text-white transition-all"
+                  >
+                    View live project
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                )}
+              </motion.div>
+            </motion.div>
           ))}
         </div>
       </section>
