@@ -48,6 +48,14 @@ const projects = [
     tags: ["Data Viz", "Chart.js", "Marketing"],
     link: "#",
   },
+  {
+    id: 3,
+    title: "Baseball Team Player Records",
+    desc: "사회인 야구팀 선수 기록 저장·관리용 웹",
+    image: "https://images.unsplash.com/photo-1515703406961-3a0f274a7386?q=80&w=2070&auto=format&fit=crop",
+    tags: ["Next.js", "Record Management", "Team Stats"],
+    link: "https://baseball-zeta.vercel.app/",
+  },
 ];
 
 // --- 컴포넌트 섹션 ---
@@ -170,7 +178,7 @@ export default function Portfolio() {
       {/* 네비게이션 */}
       <nav className="fixed top-0 w-full z-50 backdrop-blur-md border-b border-white/10 px-6 py-4 flex justify-between items-center">
         <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400">
-          Dev_Portfolio
+          권순철 포트폴리오
         </span>
         <div className="flex gap-4">
           <Github className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer transition-colors" />
@@ -208,9 +216,8 @@ export default function Portfolio() {
               }}
             />
             <div className="relative w-48 h-48 md:w-56 md:h-56 rounded-2xl overflow-hidden border-2 border-white/20 bg-gradient-to-br from-purple-500/20 to-blue-500/20 backdrop-blur-sm shadow-2xl">
-              {/* 본인 사진 경로로 교체하세요: /profile.jpg 또는 public 폴더에 넣기 */}
               <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop"
+                src="/profile.jpeg"
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
@@ -367,7 +374,7 @@ export default function Portfolio() {
             >
               {/* 이미지 영역 */}
               <div className="h-48 bg-gray-800 overflow-hidden relative">
-                {/* 실제 이미지가 있다면 src에 넣으세요 */}
+                {/* 실제 이미지가  src에  수정필요 */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] to-transparent z-10" />
                 <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
               </div>
