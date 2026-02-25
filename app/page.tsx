@@ -37,6 +37,33 @@ const CONTACT_INFO = {
   phone: "010-5501-2760",
 };
 
+// About Me 문구 (원하면 수정)
+const ABOUT_ME_TEXT =
+  "프론트엔드와 데이터를 함께 다루며, 스타트업과 스포츠 산업에서 실무 경험을 쌓았습니다. AI 도구를 활용해 생산성을 높이면서, 사용자 중심의 인터페이스를 만드는 데 집중합니다.";
+
+// 기술 스택 (이름 + 아이콘 URL, devicon CDN) — 추가/삭제 자유
+const TECH_STACK = [
+  { name: "React", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" },
+  { name: "TypeScript", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" },
+  { name: "Next.js", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" },
+  { name: "JavaScript", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" },
+  { name: "Tailwind CSS", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" },
+  { name: "Node.js", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" },
+  { name: "HTML5", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" },
+  { name: "CSS3", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" },
+  { name: "Git", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" },
+];
+
+// 사용한 적 있는 기술·도구 (아이콘 추가/삭제 자유)
+const TECH_STACK_USED = [
+  { name: "PHP", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" },
+  { name: "MySQL", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" },
+  { name: "MongoDB", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" },
+  { name: "Figma", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg" },
+  { name: "Illustrator", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/illustrator/illustrator-plain.svg" },
+  { name: "Photoshop", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/photoshop/photoshop-plain.svg" },
+];
+
 const projects = [
   {
     id: 1,
@@ -94,66 +121,22 @@ function MarqueeScroller({ items, duration = 15 }: { items: string[]; duration?:
   );
 }
 
-/** 자기소개서 카드 - 커서 근접 시 글로우 + 커서 따라다니는 하이라이트 */
-function SelfIntroCard({
-  title,
-  content,
-  mouseX,
-  mouseY,
-}: {
-  title: string;
-  content: string;
-  mouseX: number;
-  mouseY: number;
-}) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [glow, setGlow] = useState(0);
-  const [highlightPos, setHighlightPos] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const dist = Math.sqrt((mouseX - centerX) ** 2 + (mouseY - centerY) ** 2);
-    setGlow(Math.max(0, 1 - dist / 200));
-    setHighlightPos({ x: mouseX - rect.left, y: mouseY - rect.top });
-  }, [mouseX, mouseY]);
-
-  return (
-    <motion.div
-      ref={cardRef}
-      whileHover={{ scale: 1.02 }}
-      className="relative rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-4 overflow-hidden transition-all duration-300"
-      style={{
-        boxShadow: `0 0 ${20 + glow * 30}px rgba(139, 92, 246, ${0.1 + glow * 0.2}), inset 0 0 ${glow * 20}px rgba(139, 92, 246, 0.05)`,
-        borderColor: `rgba(255,255,255,${0.1 + glow * 0.1})`,
-      }}
-    >
-      {/* 커서 따라다니는 하이라이트 */}
-      <div
-        className="absolute w-32 h-32 rounded-full pointer-events-none transition-opacity duration-200"
-        style={{
-          left: highlightPos.x - 64,
-          top: highlightPos.y - 64,
-          background: "radial-gradient(circle, rgba(139,92,246,0.5) 0%, transparent 70%)",
-          opacity: glow * 0.6,
-        }}
-      />
-      <div className="relative z-10">
-        <span className="text-purple-400 font-bold text-sm mb-2 block"># {title}</span>
-        <p className="text-gray-300 text-sm leading-relaxed">{content}</p>
-      </div>
-    </motion.div>
-  );
-}
-
 export default function Portfolio() {
   const targetRef = useRef(null);
+  const aboutSectionRef = useRef<HTMLElement | null>(null);
   const { scrollYProgress } = useScroll();
+  const { scrollYProgress: aboutScrollProgress } = useScroll({
+    target: aboutSectionRef,
+    offset: ["start end", "end start"],
+  });
   const mousePosition = useMousePosition();
   const [windowSize, setWindowSize] = useState({ w: 1920, h: 1080 });
   const [isContactOpen, setIsContactOpen] = useState(false);
+
+  // About 섹션이 뷰포트에 들어오는 구간에서 카드가 살짝 올라오고 불투명해지는 효과
+  const aboutCardY = useTransform(aboutScrollProgress, [0, 0.25], [24, 0]);
+  const aboutCardOpacity = useTransform(aboutScrollProgress, [0, 0.2], [0.6, 1]);
+  const aboutLineScale = useTransform(aboutScrollProgress, [0, 0.15], [0, 1]);
 
   useEffect(() => {
     setWindowSize({ w: window.innerWidth, h: window.innerHeight });
@@ -260,8 +243,8 @@ export default function Portfolio() {
         BUILD
       </motion.div>
 
-      {/* 1. 히어로 섹션 (자기소개 + 프로필 사진) */}
-      <section className="relative z-10 flex flex-col md:flex-row justify-center items-center min-h-screen px-4 py-20 md:py-0 gap-12 md:gap-16">
+      {/* 1. 히어로 섹션 (자기소개 + 프로필 사진) — About Me 스크롤 반응용 ref */}
+      <section ref={aboutSectionRef} className="relative z-10 flex flex-col md:flex-row justify-center items-center min-h-screen px-4 py-20 md:py-0 gap-12 md:gap-16">
         {/* 프로필 사진 - 커서 기반 3D 틸트 */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -305,11 +288,10 @@ export default function Portfolio() {
             transition={{ delay: 0.3 }}
             className="text-gray-400 text-sm mb-2"
           >
-            Hi, I&apos;m
           </motion.p>
           {/* 타이틀 단어별 스태거 + 살짝 바운스 */}
           <h1 className="text-4xl md:text-6xl font-extrabold mb-2 leading-tight text-left overflow-hidden">
-            {"AI-Augmented Developer".split(" ").map((word, i) => (
+            {"권순철 Portfolio".split(" ").map((word, i) => (
               <motion.span
                 key={i}
                 initial={{ opacity: 0, y: 28 }}
@@ -345,33 +327,76 @@ export default function Portfolio() {
             <MarqueeScroller items={marqueeSkills} duration={20} />
           </motion.div>
 
-          {/* 회사 지원용 자기소개서 카드 - 커서 근접 시 글로우 */}
-          <div className="space-y-4 mb-8">
-            <SelfIntroCard
-              title="성장 과정"
-              content="프론트엔드 개발과 데이터 분석을 병행하며, 스타트업과 스포츠 산업(LG 세이커스)에서 실무 경험을 쌓았습니다. AI 도구를 적극 활용해 개발 생산성을 높이는 동시에, 사용자 중심의 인터페이스를 설계하는 데 집중해 왔습니다."
-              mouseX={mousePosition.x}
-              mouseY={mousePosition.y}
-            />
-            <SelfIntroCard
-              title="지원 동기"
-              content="귀사의 혁신적인 기술과 서비스 철학에 큰 감명을 받았습니다. 데이터 기반 의사결정과 사용자 경험 개선에 대한 제 경험과 역량이 귀사에 기여할 수 있다고 확신하며, AI와의 협업 능력을 바탕으로 더 나은 제품을 함께 만들어 가고 싶습니다."
-              mouseX={mousePosition.x}
-              mouseY={mousePosition.y}
-            />
-            <SelfIntroCard
-              title="입사 후 포부"
-              content="입사 후에는 사용자 피드백을 기반으로 한 지속적인 개선, 접근성과 성능을 고려한 웹 제품 개발, 그리고 팀 내 AI 활용 워크플로우 확산에 기여하겠습니다. 단기적으로는 실무에 빠르게 적응하고, 장기적으로는 기술과 UX를 아우르는 핵심 인력으로 성장하겠습니다."
-              mouseX={mousePosition.x}
-              mouseY={mousePosition.y}
-            />
-          </div>
-          
-          {/* <div className="flex gap-4">
-            <button className="px-8 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 font-bold transition-all shadow-[0_0_20px_rgba(139,92,246,0.5)] hover:scale-105 hover:shadow-[0_0_30px_rgba(139,92,246,0.6)]">
-              포트폴리오 보기
-            </button>
-          </div> */}
+          {/* About Me + 기술 스택 (스크롤 반응 애니메이션) */}
+          <motion.div
+            style={{ y: aboutCardY, opacity: aboutCardOpacity }}
+            className="space-y-6"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-purple-400 font-bold text-sm"># About Me</span>
+              <motion.div
+                className="h-px flex-1 bg-gradient-to-r from-purple-500/60 to-transparent"
+                style={{ scaleX: aboutLineScale, transformOrigin: "left" }}
+              />
+            </div>
+            <p className="text-gray-300 text-sm leading-relaxed max-w-2xl">
+              {ABOUT_ME_TEXT}
+            </p>
+            <p className="text-xs text-gray-500 uppercase tracking-widest">Tech Stack</p>
+            <div className="flex flex-wrap gap-3">
+              {TECH_STACK.map((tech, i) => (
+                <motion.div
+                  key={tech.name}
+                  initial={{ opacity: 0, scale: 0.7, y: 12 }}
+                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                  viewport={{ once: false, amount: 0.4 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: i * 0.06,
+                    type: "spring",
+                    stiffness: 160,
+                    damping: 20,
+                  }}
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  className="flex flex-col items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-3 min-w-[72px] hover:border-purple-500/40 hover:bg-white/10 transition-colors"
+                >
+                  <img
+                    src={tech.icon}
+                    alt={tech.name}
+                    className="h-8 w-8 object-contain"
+                  />
+                  <span className="text-[10px] font-medium text-gray-400">{tech.name}</span>
+                </motion.div>
+              ))}
+            </div>
+            <p className="text-xs text-gray-500 pt-1">사용한 적 있어요</p>
+            <div className="flex flex-wrap gap-3">
+              {TECH_STACK_USED.map((tech, i) => (
+                <motion.div
+                  key={tech.name}
+                  initial={{ opacity: 0, scale: 0.7, y: 12 }}
+                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                  viewport={{ once: false, amount: 0.4 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: 0.1 + i * 0.06,
+                    type: "spring",
+                    stiffness: 160,
+                    damping: 20,
+                  }}
+                  whileHover={{ scale: 1.1, y: -2 }}
+                  className="flex flex-col items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-3 min-w-[72px] hover:border-purple-500/40 hover:bg-white/10 transition-colors"
+                >
+                  <img
+                    src={tech.icon}
+                    alt={tech.name}
+                    className="h-8 w-8 object-contain"
+                  />
+                  <span className="text-[10px] font-medium text-gray-400">{tech.name}</span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </motion.div>
 
       </section>
