@@ -1,11 +1,49 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { Code, Cpu, Layers, Rocket, ExternalLink, Mail, Github } from "lucide-react";
+import { motion, useScroll, useTransform, AnimatePresence, useSpring, useMotionValue } from "framer-motion";
+import { Code, Cpu, Layers, Rocket, ExternalLink, Mail, Github, MapPin, Sparkles, Terminal, Activity, ChevronRight } from "lucide-react";
 import { useMousePosition } from "./hooks/useMousePosition";
 
-// --- 데이터 섹션 (사용자 정보 수정) ---
+// --- 트렌디한 마그네틱 버튼 컴포넌트 ---
+function MagneticButton({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const springConfig = { damping: 15, stiffness: 150 };
+  const springX = useSpring(x, springConfig);
+  const springY = useSpring(y, springConfig);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!ref.current) return;
+    const { clientX, clientY } = e;
+    const { left, top, width, height } = ref.current.getBoundingClientRect();
+    const centerX = left + width / 2;
+    const centerY = top + height / 2;
+    x.set((clientX - centerX) * 0.35);
+    y.set((clientY - centerY) * 0.35);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ x: springX, y: springY }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// --- 데이터 섹션 ---
 const experiences = [
   {
     id: 1,
@@ -25,43 +63,23 @@ const experiences = [
   },
 ];
 
-// Gyöngy 스타일 마키 스크롤용 스킬 목록
 const marqueeSkills = [
   "React", "TypeScript", "Next.js", "AI Tools", "Tailwind CSS",
-  "UX Design", "Marketing", "Web Development", "Java Script"
+  "UX Design", "Marketing", "Web Development", "JavaScript"
 ];
 
-// 연락처 정보 (이메일 / 전화번호) - 필요 시 여기만 수정
 const CONTACT_INFO = {
   email: "yeyiyeyi@naver.com",
   phone: "010-5501-2760",
 };
 
-// About Me 문구 (원하면 수정)
-const ABOUT_ME_TEXT =
-  "프론트엔드와 데이터를 함께 다루며, 스타트업과 스포츠 산업에서 실무 경험을 쌓았습니다. AI 도구를 활용해 생산성을 높이면서, 사용자 중심의 인터페이스를 만드는 데 집중합니다.";
-
-// 기술 스택 (이름 + 아이콘 URL, devicon CDN) — 추가/삭제 자유
 const TECH_STACK = [
   { name: "React", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" },
   { name: "TypeScript", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" },
   { name: "Next.js", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" },
-  { name: "JavaScript", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" },
-  { name: "Tailwind CSS", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" },
+  { name: "Tailwind", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" },
   { name: "Node.js", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" },
-  { name: "HTML5", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" },
-  { name: "CSS3", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" },
   { name: "Git", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" },
-];
-
-// 사용한 적 있는 기술·도구 (아이콘 추가/삭제 자유)
-const TECH_STACK_USED = [
-  { name: "PHP", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" },
-  { name: "MySQL", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" },
-  { name: "MongoDB", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" },
-  { name: "Figma", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg" },
-  { name: "Illustrator", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/illustrator/illustrator-plain.svg" },
-  { name: "Photoshop", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/photoshop/photoshop-plain.svg" },
 ];
 
 const projects = [
@@ -69,7 +87,7 @@ const projects = [
     id: 1,
     title: "AI Powered Study Room",
     desc: "AI 학습 타이머와 실시간 화상 스터디 플랫폼",
-    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop", // 예시 이미지
+    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop",
     tags: ["Next.js", "Supabase", "AI API"],
     link: "https://study-room-taupe.vercel.app/",
   },
@@ -83,37 +101,37 @@ const projects = [
   },
   {
     id: 3,
-    title: "Baseball Team Player Records",
+    title: "Baseball Player Records",
     desc: "사회인 야구팀 선수 기록 저장·관리용 웹",
     image: "https://images.unsplash.com/photo-1515703406961-3a0f274a7386?q=80&w=2070&auto=format&fit=crop",
-    tags: ["Next.js", "Record Management", "Team Stats"],
+    tags: ["Next.js", "Team Stats"],
     link: "https://baseball-zeta.vercel.app/",
   },
 ];
 
-// --- 컴포넌트 섹션 ---
-
-/** Gyöngy 스타일 무한 마키 - 호버 시 속도 업 (인터랙티브) */
+// --- 무한 마키 스크롤러 ---
 function MarqueeScroller({ items, duration = 15 }: { items: string[]; duration?: number }) {
   const [isHovered, setIsHovered] = useState(false);
-  const duplicatedItems = [...items, ...items];
-  const speed = isHovered ? duration * 0.4 : duration; // 호버 시 2.5배 빠르게
+  const duplicatedItems = [...items, ...items, ...items];
+  const speed = isHovered ? duration * 0.4 : duration;
   return (
     <div
-      className="w-full overflow-hidden py-3 border-y border-white/5"
+      className="w-full overflow-hidden py-4 border-y border-white/5"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <motion.div
         className="flex gap-12 whitespace-nowrap w-max"
-        animate={{ x: "-50%" }}
+        animate={{ x: ["0%", "-33.33%"] }}
         transition={{
-          x: { repeat: Infinity, repeatType: "loop", duration: speed, ease: "linear" },
+          repeat: Infinity,
+          duration: speed,
+          ease: "linear",
         }}
       >
         {duplicatedItems.map((item, i) => (
-          <span key={i} className="text-gray-400/90 text-base md:text-lg font-medium italic">
-            {item}
+          <span key={i} className="text-gray-400/90 text-lg md:text-xl font-bold tracking-tighter uppercase italic flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-accent-purple" /> {item}
           </span>
         ))}
       </motion.div>
@@ -123,579 +141,262 @@ function MarqueeScroller({ items, duration = 15 }: { items: string[]; duration?:
 
 export default function Portfolio() {
   const targetRef = useRef(null);
-  const aboutSectionRef = useRef<HTMLElement | null>(null);
-  const { scrollYProgress } = useScroll();
-  const { scrollYProgress: aboutScrollProgress } = useScroll({
-    target: aboutSectionRef,
-    offset: ["start end", "end start"],
-  });
   const mousePosition = useMousePosition();
   const [windowSize, setWindowSize] = useState({ w: 1920, h: 1080 });
   const [isContactOpen, setIsContactOpen] = useState(false);
-
-  // About 섹션이 뷰포트에 들어오는 구간에서 카드가 살짝 올라오고 불투명해지는 효과
-  const aboutCardY = useTransform(aboutScrollProgress, [0, 0.25], [24, 0]);
-  const aboutCardOpacity = useTransform(aboutScrollProgress, [0, 0.2], [0.6, 1]);
-  const aboutLineScale = useTransform(aboutScrollProgress, [0, 0.15], [0, 1]);
+  const [currentTime, setCurrentTime] = useState("");
 
   useEffect(() => {
     setWindowSize({ w: window.innerWidth, h: window.innerHeight });
     const onResize = () => setWindowSize({ w: window.innerWidth, h: window.innerHeight });
     window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    
+    // 로컬 시간 업데이트 (트렌디한 시계 효과)
+    const updateTime = () => {
+      const now = new Date();
+      setCurrentTime(now.toLocaleTimeString("en-US", { hour12: false, hour: '2-digit', minute: '2-digit' }));
+    };
+    updateTime();
+    const timer = setInterval(updateTime, 1000 * 60);
+    
+    return () => {
+      window.removeEventListener("resize", onResize);
+      clearInterval(timer);
+    };
   }, []);
 
-  // 배경 텍스트 파라럭스 (스크롤에 따라 움직임)
-  const bgTextY = useTransform(scrollYProgress, [0, 0.5], [0, 80]);
-
-  // 프로필 사진 3D 틸트 (커서 기반)
-  const photoTiltX = ((mousePosition.y - windowSize.h / 2) / (windowSize.h / 2)) * -8;
-  const photoTiltY = ((mousePosition.x - windowSize.w / 2) / (windowSize.w / 2)) * 8;
-
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white selection:bg-purple-500 selection:text-white overflow-hidden font-sans">
+    <div className="min-h-screen bg-[#0a0a0f] text-white selection:bg-accent-purple selection:text-white overflow-x-hidden font-sans grain">
       
-      {/* 커서 따라다니는 스포트라이트 효과 */}
-      <div
-        className="fixed w-[600px] h-[600px] rounded-full pointer-events-none z-0 transition-opacity duration-300"
-        style={{
-          left: mousePosition.x - 300,
-          top: mousePosition.y - 300,
-          background: "radial-gradient(circle, rgba(139,92,246,0.15) 0%, rgba(59,130,246,0.08) 25%, transparent 60%)",
-        }}
-      />
-      
-      {/* 배경 그라디언트 + 플로팅 오브 (천천히 움직이는 원형) */}
-      <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[100px]" />
-        {/* 플로팅 오브 3개 - 각각 다른 속도/방향 */}
-        <motion.div
-          className="absolute w-72 h-72 rounded-full bg-purple-500/10 blur-[80px]"
-          style={{ top: "20%", left: "10%" }}
-          animate={{
-            x: [0, 40, -20, 0],
-            y: [0, -30, 20, 0],
-          }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute w-96 h-96 rounded-full bg-pink-500/10 blur-[90px]"
-          style={{ top: "60%", right: "5%" }}
-          animate={{
-            x: [0, -50, 30, 0],
-            y: [0, 25, -15, 0],
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute w-64 h-64 rounded-full bg-blue-500/10 blur-[70px]"
-          style={{ bottom: "25%", left: "20%" }}
-          animate={{
-            x: [0, 30, -40, 0],
-            y: [0, -20, 35, 0],
-          }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        />
+      {/* 0. 프리미엄 배경 레이어 */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[10%] left-[5%] w-[50vw] h-[50vw] bg-accent-purple/10 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[10%] right-[5%] w-[40vw] h-[40vw] bg-accent-blue/10 rounded-full blur-[100px]" />
       </div>
 
-      {/* 네비게이션 - 로고 그라디언트 + 연락처 모달 트리거 */}
-      <nav className="fixed top-0 w-full z-50 backdrop-blur-md border-b border-white/10 px-6 py-4 flex justify-between items-center">
-        <motion.span
-          className="text-xl font-bold bg-clip-text text-transparent bg-[length:200%_auto]"
-          style={{
-            backgroundImage: "linear-gradient(90deg, #c084fc, #f472b6, #c084fc)",
-            backgroundPosition: "0% 50%",
-          }}
-          animate={{ backgroundPosition: ["0% 50%", "100% 50%"] }}
-          transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-        >
-          권순철 포트폴리오
-        </motion.span>
-        <div className="flex gap-4 items-center">
-          <a
-            href="https://github.com/soonchul12"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-400 hover:text-white transition-colors"
-            aria-label="GitHub"
-          >
-            <Github className="w-5 h-5" />
-          </a>
-          <button
-            type="button"
-            onClick={() => setIsContactOpen(true)}
-            className="text-gray-400 hover:text-white transition-colors"
-            aria-label="이메일 / 연락처 열기"
-          >
-            <Mail className="w-5 h-5" />
-          </button>
+      {/* 1. 플로팅 내비게이션 (Glassmorphic) */}
+      <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full border border-white/10 bg-black/40 backdrop-blur-2xl flex items-center gap-8">
+        <span className="text-sm font-bold text-gradient">SOONCHUL.DEV</span>
+        <div className="flex gap-6 items-center">
+          <button onClick={() => setIsContactOpen(true)} className="text-xs font-medium text-gray-400 hover:text-white transition-colors">Contact</button>
+          <a href="https://github.com/soonchul12" target="_blank" className="text-gray-400 hover:text-white transition-colors"><Github className="w-4 h-4" /></a>
         </div>
       </nav>
 
-      {/* Gyöngy 스타일: 큰 배경 텍스트 (스크롤 파라럭스 + 그라디언트 흐름) */}
-      <motion.div
-        className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[15vw] md:text-[20vw] font-black pointer-events-none z-0 select-none bg-clip-text text-transparent bg-gradient-to-r from-white/[0.02] via-purple-500/[0.06] to-white/[0.02] bg-[length:200%_100%]"
-        style={{ y: bgTextY }}
-        animate={{ backgroundPosition: ["0% 50%", "100% 50%"] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-      >
-        BUILD
-      </motion.div>
-
-      {/* 1. 히어로 섹션 (자기소개 + 프로필 사진) — About Me 스크롤 반응용 ref */}
-      <section ref={aboutSectionRef} className="relative z-10 flex flex-col md:flex-row justify-center items-center min-h-screen px-4 py-20 md:py-0 gap-12 md:gap-16">
-        {/* 프로필 사진 - 커서 기반 3D 틸트 */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8 }}
-          className="flex-shrink-0"
-          style={{
-            transform: `perspective(1000px) rotateX(${photoTiltX}deg) rotateY(${photoTiltY}deg)`,
-            transformStyle: "preserve-3d",
-          }}
+      {/* 2. 히어로 섹션 */}
+      <section className="relative z-10 min-h-screen flex flex-col justify-center items-center px-6 pt-32 pb-20">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-16"
         >
-          <div className="relative group">
-            {/* 커서 위치에 따라 움직이는 글로우 */}
-            <div 
-              className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-500 to-blue-600 opacity-50 blur-xl transition-opacity duration-300 group-hover:opacity-70 pointer-events-none"
-              style={{
-                transform: `translate(${(mousePosition.x / windowSize.w - 0.5) * 16}px, ${(mousePosition.y / windowSize.h - 0.5) * 16}px)`,
-              }}
-            />
-            <div className="relative w-48 h-48 md:w-56 md:h-56 rounded-2xl overflow-hidden border-2 border-white/20 bg-gradient-to-br from-purple-500/20 to-blue-500/20 backdrop-blur-sm shadow-2xl">
-              <img
-                src="/profile.jpeg"
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
-            </div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs font-medium text-accent-purple mb-6">
+            <Activity className="w-3 h-3" /> Available for new challenges
+          </div>
+          <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-none mb-8">
+            CRAFTING <br />
+            <span className="text-gradient">AI DRIVEN</span> WEB
+          </h1>
+          <p className="text-gray-400 text-lg max-w-xl mx-auto mb-10">
+            데이터와 디자인을 연결하는 프론트엔드 개발자 권순철입니다. <br />
+            AI 도구를 통해 더 빠르고 정교한 사용자 경험을 설계합니다.
+          </p>
+          
+          <div className="flex gap-4 justify-center">
+            <MagneticButton>
+              <button 
+                onClick={() => setIsContactOpen(true)}
+                className="px-8 py-4 rounded-2xl bg-white text-black font-bold flex items-center gap-2 hover:bg-gray-200 transition-colors shadow-2xl"
+              >
+                Hire Me <ChevronRight className="w-4 h-4" />
+              </button>
+            </MagneticButton>
+            <MagneticButton>
+              <a 
+                href="#projects"
+                className="px-8 py-4 rounded-2xl border border-white/10 bg-white/5 font-bold hover:bg-white/10 transition-colors"
+              >
+                View Work
+              </a>
+            </MagneticButton>
           </div>
         </motion.div>
 
-        {/* 자기소개서 양식 */}
-        <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="max-w-2xl"
-        >
-          {/* Gyöngy 스타일: 상단 소개 라벨 */}
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-gray-400 text-sm mb-2"
-          >
-          </motion.p>
-          {/* 타이틀 단어별 스태거 + 살짝 바운스 */}
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-2 leading-tight text-left overflow-hidden">
-            {"권순철 Portfolio".split(" ").map((word, i) => (
-              <motion.span
-                key={i}
-                initial={{ opacity: 0, y: 28 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  delay: 0.35 + i * 0.12,
-                  type: "spring",
-                  stiffness: 120,
-                  damping: 14,
-                }}
-                className="inline-block mr-[0.25em]"
-              >
-                {word}
-              </motion.span>
-            ))}
-          </h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, type: "spring", stiffness: 100 }}
-            className="text-2xl md:text-3xl font-bold mb-6 text-purple-300/90 italic"
-          >
-            open to create
-          </motion.p>
-
-          {/* Gyöngy 스타일 마키 스크롤 */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7 }}
-            className="mb-8"
-          >
-            <MarqueeScroller items={marqueeSkills} duration={20} />
-          </motion.div>
-
-          {/* About Me + 기술 스택 (스크롤 반응 애니메이션) */}
-          <motion.div
-            style={{ y: aboutCardY, opacity: aboutCardOpacity }}
-            className="space-y-6"
-          >
-            <div className="flex items-center gap-2">
-              <span className="text-purple-400 font-bold text-sm"># About Me</span>
-              <motion.div
-                className="h-px flex-1 bg-gradient-to-r from-purple-500/60 to-transparent"
-                style={{ scaleX: aboutLineScale, transformOrigin: "left" }}
-              />
+        {/* 3. 벤토 그리드 레이아웃 (핵심 특색 섹션) */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-6xl w-full">
+          {/* Profile Card */}
+          <motion.div whileHover={{ y: -5 }} className="bento-card md:col-span-2 p-8 flex items-end justify-between group">
+            <div className="relative z-10">
+              <h3 className="text-2xl font-bold mb-2 italic">About Me</h3>
+              <p className="text-sm text-gray-400 leading-relaxed max-w-sm">
+                스포츠 산업의 데이터와 스타트업의 유연함을 경험했습니다. <br />
+                단순한 코딩을 넘어, 비즈니스 가치를 만드는 개발을 지향합니다.
+              </p>
             </div>
-            <p className="text-gray-300 text-sm leading-relaxed max-w-2xl">
-              {ABOUT_ME_TEXT}
-            </p>
-            <p className="text-xs text-gray-500 uppercase tracking-widest">Tech Stack</p>
-            <div className="flex flex-wrap gap-3">
-              {TECH_STACK.map((tech, i) => (
-                <motion.div
-                  key={tech.name}
-                  initial={{ opacity: 0, scale: 0.7, y: 12 }}
-                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                  viewport={{ once: false, amount: 0.4 }}
-                  transition={{
-                    duration: 0.4,
-                    delay: i * 0.06,
-                    type: "spring",
-                    stiffness: 160,
-                    damping: 20,
-                  }}
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  className="flex flex-col items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-3 min-w-[72px] hover:border-purple-500/40 hover:bg-white/10 transition-colors"
-                >
-                  <img
-                    src={tech.icon}
-                    alt={tech.name}
-                    className="h-8 w-8 object-contain"
-                  />
-                  <span className="text-[10px] font-medium text-gray-400">{tech.name}</span>
-                </motion.div>
-              ))}
-            </div>
-            <p className="text-xs text-gray-500 pt-1">사용한 적 있어요</p>
-            <div className="flex flex-wrap gap-3">
-              {TECH_STACK_USED.map((tech, i) => (
-                <motion.div
-                  key={tech.name}
-                  initial={{ opacity: 0, scale: 0.7, y: 12 }}
-                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                  viewport={{ once: false, amount: 0.4 }}
-                  transition={{
-                    duration: 0.4,
-                    delay: 0.1 + i * 0.06,
-                    type: "spring",
-                    stiffness: 160,
-                    damping: 20,
-                  }}
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  className="flex flex-col items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-3 min-w-[72px] hover:border-purple-500/40 hover:bg-white/10 transition-colors"
-                >
-                  <img
-                    src={tech.icon}
-                    alt={tech.name}
-                    className="h-8 w-8 object-contain"
-                  />
-                  <span className="text-[10px] font-medium text-gray-400">{tech.name}</span>
-                </motion.div>
-              ))}
+            <div className="absolute top-0 right-0 w-48 h-48 opacity-20 group-hover:opacity-40 transition-opacity">
+              <img src="/profile.jpeg" className="w-full h-full object-cover grayscale" />
             </div>
           </motion.div>
-        </motion.div>
 
+          {/* AI Status Card */}
+          <motion.div whileHover={{ y: -5 }} className="bento-card p-6 flex flex-col justify-between overflow-hidden">
+            <div className="flex justify-between items-start">
+              <div className="w-8 h-8 rounded-lg bg-accent-purple/20 flex items-center justify-center">
+                <Terminal className="w-4 h-4 text-accent-purple" />
+              </div>
+              <span className="text-[10px] text-accent-purple font-mono">LIVE_AGENT</span>
+            </div>
+            <div className="mt-4">
+              <p className="text-[10px] uppercase text-gray-500 mb-1">Current Focus</p>
+              <p className="text-sm font-bold font-mono">Next.js 16 & <br />Mastra AI Agent</p>
+            </div>
+            <div className="mt-4 flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-[10px] text-gray-400 font-mono tracking-widest">THINKING...</span>
+            </div>
+          </motion.div>
+
+          {/* Location & Time Card */}
+          <motion.div whileHover={{ y: -5 }} className="bento-card p-6 flex flex-col justify-between">
+            <div className="flex justify-between items-start">
+              <MapPin className="w-4 h-4 text-accent-blue" />
+              <span className="text-lg font-mono font-bold">{currentTime}</span>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase text-gray-500 mb-1">Base</p>
+              <p className="text-sm font-bold">Seoul, South Korea</p>
+            </div>
+          </motion.div>
+
+          {/* Tech Stack Horizontal Scroll (Bento Item) */}
+          <div className="md:col-span-4 bento-card py-6 px-8 flex items-center justify-between">
+            <span className="text-xs font-bold text-gray-500">EXPERTISE</span>
+            <div className="flex gap-6 overflow-x-auto pb-2 no-scrollbar">
+              {TECH_STACK.map((tech) => (
+                <div key={tech.name} className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/5 bg-white/5">
+                  <img src={tech.icon} className="w-4 h-4" />
+                  <span className="text-xs font-medium">{tech.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* 2. 경력 섹션 (Timeline) - 타이틀 언더라인 그리기 */}
-      <section className="relative z-10 py-20 px-6 md:px-20 max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          className="mb-16"
-        >
-          <motion.h2 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
-            <Rocket className="text-purple-400" /> Experience
-          </motion.h2>
-          <motion.div
-            className="h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mt-2"
-            initial={{ width: 0 }}
-            whileInView={{ width: "120px" }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          />
-        </motion.div>
+      {/* 4. 마키 스크롤 (Skill Highlights) */}
+      <MarqueeScroller items={marqueeSkills} duration={25} />
 
-        <div className="relative border-l border-white/10 ml-4 md:ml-6 space-y-12">
-          {experiences.map((exp, index) => (
-            <motion.div 
-              key={exp.id}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ delay: index * 0.2 }}
-              className="relative pl-8 md:pl-12"
+      {/* 5. 프로젝트 섹션 */}
+      <section id="projects" className="relative z-10 py-32 px-6 max-w-6xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
+          <div>
+            <span className="text-xs font-bold text-accent-purple uppercase tracking-[0.2em] mb-4 block">Selection</span>
+            <h2 className="text-5xl font-black italic uppercase tracking-tighter leading-none">Featured<br />Projects</h2>
+          </div>
+          <p className="text-gray-500 text-sm max-w-[280px]">사용자의 문제 해결과 비즈니스 성장을 고려한 엄선된 결과물입니다.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {projects.map((project, i) => (
+            <motion.div
+              key={project.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="group cursor-pointer"
             >
-              {/* 타임라인 점 */}
-              <div className="absolute -left-[5px] top-2 w-3 h-3 rounded-full bg-purple-500 shadow-[0_0_10px_#a855f7]" />
-              
-              <span className="text-sm text-gray-400 font-mono mb-2 block">{exp.period}</span>
-              <h3 className="text-2xl font-bold text-white mb-1">{exp.title}</h3>
-              <p className="text-purple-400 font-medium mb-3">{exp.role}</p>
-              <p className="text-gray-300 mb-4 leading-relaxed max-w-2xl">{exp.desc}</p>
-              
-              <div className="flex flex-wrap gap-2">
-                {exp.tech.map((t) => (
-                  <span key={t} className="px-3 py-1 text-xs rounded-full bg-white/5 border border-white/10 text-gray-300">
-                    {t}
-                  </span>
-                ))}
+              <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-white/10 mb-6 transition-transform duration-700 group-hover:scale-[1.02]">
+                <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10 opacity-60" />
+                <img src={project.image} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute inset-x-0 bottom-0 p-8 z-20">
+                  <div className="flex gap-2 mb-3">
+                    {project.tags.map(t => <span key={t} className="text-[10px] px-2 py-1 rounded-full border border-white/20 backdrop-blur-md">{t}</span>)}
+                  </div>
+                  <h3 className="text-2xl font-bold mb-1">{project.title}</h3>
+                  <div className="overflow-hidden h-0 group-hover:h-8 transition-all duration-500">
+                    <p className="text-xs text-gray-300 flex items-center gap-1">View Project Details <ExternalLink className="w-3 h-3" /></p>
+                  </div>
+                </div>
               </div>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* 3. 포트폴리오 섹션 - 세로 스텝 + 스크롤 업 애니메이션 */}
-      <section className="relative z-10 py-20 px-6 md:px-20 max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          className="mb-12"
-        >
-          <motion.h2 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
-            <Layers className="text-blue-400" /> Projects
-          </motion.h2>
-          <motion.div
-            className="h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mt-2"
-            initial={{ width: 0 }}
-            whileInView={{ width: "100px" }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          />
-        </motion.div>
-
-        <div className="space-y-24">
-          {projects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, y: 80 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.4 }}
-              transition={{ duration: 0.7, delay: index * 0.1, ease: "easeOut" }}
-              className="flex flex-col md:flex-row items-stretch gap-8 md:gap-12"
-            >
-              {/* 프로젝트 썸네일 카드 */}
-              <motion.div
-                className="md:w-1/2"
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: false, amount: 0.5 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <div className="relative overflow-hidden rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm shadow-xl">
-                  <div className="h-56 md:h-64 bg-gray-900 overflow-hidden relative">
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] to-transparent z-10" />
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-                    />
-                  </div>
-                  <div className="absolute inset-0 pointer-events-none opacity-0 hover:opacity-100 transition-opacity duration-500">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/40 via-pink-500/40 to-blue-500/40 blur-2xl" />
-                  </div>
+      {/* 6. 경력 (Experience) - 세련된 수직 리스트 */}
+      <section className="relative z-10 py-32 px-6 max-w-4xl mx-auto">
+        <h2 className="text-sm font-bold text-gray-500 mb-16 tracking-widest text-center">JOURNEY SO FAR</h2>
+        <div className="space-y-16">
+          {experiences.map((exp) => (
+            <div key={exp.id} className="grid grid-cols-1 md:grid-cols-4 gap-8 group">
+              <span className="text-sm font-mono text-accent-purple">{exp.period}</span>
+              <div className="md:col-span-3">
+                <h3 className="text-3xl font-bold mb-2 group-hover:text-accent-purple transition-colors">{exp.title}</h3>
+                <p className="text-sm text-accent-blue font-medium mb-4">{exp.role}</p>
+                <p className="text-gray-400 leading-relaxed mb-6">{exp.desc}</p>
+                <div className="flex gap-2">
+                  {exp.tech.map(t => <span key={t} className="text-[10px] px-2 py-1 rounded-lg bg-white/5 border border-white/10">{t}</span>)}
                 </div>
-              </motion.div>
-
-              {/* 프로젝트 설명 패널 */}
-              <motion.div
-                className="md:w-1/2 flex flex-col justify-center text-left space-y-4"
-                initial={{ opacity: 0, x: 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: false, amount: 0.5 }}
-                transition={{ duration: 0.6, delay: 0.15 + index * 0.1 }}
-              >
-                <p className="text-xs uppercase tracking-[0.22em] text-blue-300/80">
-                  Project {index + 1}
-                </p>
-                <h3 className="text-2xl md:text-3xl font-bold mb-1">
-                  {project.title}
-                </h3>
-                <p className="text-gray-300 leading-relaxed">
-                  {project.desc}
-                </p>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-500/15 text-purple-200 border border-purple-400/30"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-                {project.link && project.link !== "#" && (
-                  <a
-                    href={project.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm mt-4 text-blue-200 hover:text-white transition-all"
-                  >
-                    View live project
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                )}
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           ))}
         </div>
       </section>
 
-      {/* 4. Contact Footer - 버튼 호버 시 살짝 끌려오는 느낌 */}
-      <footer className="relative z-10 py-20 text-center border-t border-white/10 mt-20 bg-black/40 backdrop-blur-lg">
-        <motion.h2
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-3xl font-bold mb-6"
-        >
-          Let&apos;s Build Together
-        </motion.h2>
-        <p className="text-gray-400 mb-8">AI와 함께 더 빠르고 창의적인 웹을 만듭니다.</p>
-        <motion.button
-          type="button"
-          onClick={() => setIsContactOpen(true)}
-          className="px-8 py-3 rounded-full border border-white/20 hover:bg-white hover:text-black transition-colors flex items-center gap-2 mx-auto w-fit"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <Mail className="w-4 h-4" /> Contact Me
-        </motion.button>
-        <p className="text-gray-600 text-sm mt-12">© 2026 Developer Portfolio. All rights reserved.</p>
+      {/* 7. 컨택 푸터 */}
+      <footer className="relative z-10 py-32 text-center">
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-6xl md:text-8xl font-black tracking-tighter italic uppercase mb-12">
+            Let&apos;s build <br /> something <span className="text-gradient underline decoration-accent-purple underline-offset-8">epic</span>
+          </h2>
+          <MagneticButton className="inline-block">
+            <button 
+              onClick={() => setIsContactOpen(true)}
+              className="px-12 py-6 rounded-3xl bg-white text-black text-xl font-black uppercase hover:scale-110 transition-transform shadow-[0_0_50px_rgba(255,255,255,0.2)]"
+            >
+              Contact Me
+            </button>
+          </MagneticButton>
+          <div className="mt-32 flex flex-col md:flex-row justify-between items-center border-t border-white/5 pt-12 gap-6">
+            <p className="text-xs text-gray-500">© 2026 SOONCHUL PORTFOLIO</p>
+            <div className="flex gap-8">
+              <a href={`mailto:${CONTACT_INFO.email}`} className="text-xs text-gray-500 hover:text-white transition-colors uppercase font-bold tracking-widest">Email</a>
+              <a href="https://github.com/soonchul12" target="_blank" className="text-xs text-gray-500 hover:text-white transition-colors uppercase font-bold tracking-widest">Github</a>
+            </div>
+          </div>
+        </div>
       </footer>
 
-      {/* 연락처 모달 - 세련된 명함 스타일 */}
+      {/* 연락처 모달 (더 세련되게 수정) */}
       <AnimatePresence>
         {isContactOpen && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-xl"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsContactOpen(false)}
           >
             <motion.div
-              initial={{ opacity: 0, y: 40, scale: 0.9, rotateX: -15 }}
-              animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
-              exit={{ opacity: 0, y: 30, scale: 0.9 }}
-              transition={{ type: "spring", stiffness: 140, damping: 16 }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative w-[320px] md:w-[380px] rounded-3xl border border-white/15 bg-gradient-to-br from-white/10 via-white/5 to-purple-500/10 shadow-[0_24px_80px_rgba(0,0,0,0.8)] overflow-hidden"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bento-card max-w-md w-full p-12 mx-6 relative"
+              onClick={e => e.stopPropagation()}
             >
-              {/* 명함 상단 그라디언트 바 */}
-              <div className="h-1.5 bg-gradient-to-r from-purple-500 via-pink-400 to-blue-400" />
-
-              {/* 명함 본문 */}
-              <div className="p-6 md:p-7 relative">
-                {/* 배경 라인 애니메이션 */}
-                <motion.div
-                  className="pointer-events-none absolute inset-0 opacity-40"
-                  initial={{ backgroundPosition: "0% 0%" }}
-                  animate={{ backgroundPosition: ["0% 0%", "100% 100%"] }}
-                  transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(circle at 0 0, rgba(147, 197, 253, 0.25), transparent 55%), radial-gradient(circle at 100% 100%, rgba(196, 181, 253, 0.33), transparent 55%)",
-                    backgroundSize: "160% 160%",
-                  }}
-                />
-
-                <div className="relative flex flex-col gap-4">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="text-left">
-                      <p className="text-xs uppercase tracking-[0.22em] text-purple-300/80 mb-1">
-                        Frontend & Data
-                      </p>
-                      <h3 className="text-xl md:text-2xl font-semibold tracking-tight">
-                        권순철
-                      </h3>
-                      <p className="text-sm text-gray-300/90">
-                        AI-Augmented Developer
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-end gap-1 text-xs text-gray-400">
-                      <span className="px-2 py-0.5 rounded-full border border-white/15 bg-black/40">
-                        Portfolio
-                      </span>
-                      <span className="px-2 py-0.5 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-100">
-                        Open to work
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="h-px bg-gradient-to-r from-white/5 via-white/30 to-white/5 my-1" />
-
-                  <div className="space-y-3 text-sm">
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-purple-500/20 flex items-center justify-center border border-purple-400/40">
-                        <Mail className="w-3.5 h-3.5 text-purple-200" />
-                      </div>
-                      <div className="flex flex-col text-left">
-                        <span className="text-[11px] uppercase tracking-[0.16em] text-gray-400">
-                          Email
-                        </span>
-                        <a
-                          href={`mailto:${CONTACT_INFO.email}`}
-                          className="font-medium text-gray-100 hover:text-purple-200 transition-colors"
-                        >
-                          {CONTACT_INFO.email}
-                        </a>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-blue-500/15 flex items-center justify-center border border-blue-400/40">
-                        <span className="w-3.5 h-3.5 rounded-sm border border-blue-200/70" />
-                      </div>
-                      <div className="flex flex-col text-left">
-                        <span className="text-[11px] uppercase tracking-[0.16em] text-gray-400">
-                          Phone
-                        </span>
-                        <span className="font-medium text-gray-100">
-                          {CONTACT_INFO.phone}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-gray-500/10 flex items-center justify-center border border-gray-400/40">
-                        <Github className="w-3.5 h-3.5 text-gray-200" />
-                      </div>
-                      <div className="flex flex-col text-left">
-                        <span className="text-[11px] uppercase tracking-[0.16em] text-gray-400">
-                          GitHub
-                        </span>
-                        <a
-                          href="https://github.com/soonchul12"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-medium text-gray-100 hover:text-purple-200 transition-colors"
-                        >
-                          github.com/soonchul12
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-2">
-                    <span className="text-[11px] text-gray-400">
-                      AI와 함께 더 빠르고 정교하게.
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setIsContactOpen(false)}
-                      className="text-xs px-3 py-1.5 rounded-full border border-white/25 bg-white/5 hover:bg-white/15 text-gray-100 transition-colors"
-                    >
-                      닫기
-                    </button>
-                  </div>
+              <h3 className="text-4xl font-black italic uppercase mb-8 text-gradient">Get in touch</h3>
+              <div className="space-y-6">
+                <div>
+                  <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-2">Email Me</p>
+                  <a href={`mailto:${CONTACT_INFO.email}`} className="text-xl font-bold hover:text-accent-purple transition-colors">{CONTACT_INFO.email}</a>
+                </div>
+                <div>
+                  <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-2">Call Me</p>
+                  <p className="text-xl font-bold">{CONTACT_INFO.phone}</p>
+                </div>
+                <div className="pt-8">
+                  <button onClick={() => setIsContactOpen(false)} className="w-full py-4 rounded-2xl border border-white/10 hover:bg-white hover:text-black font-bold transition-all uppercase text-xs tracking-widest">Close</button>
                 </div>
               </div>
             </motion.div>
