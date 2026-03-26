@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local scratch / logs
+*.txt
+my_portfolio@*
+my-portfolio-sub-temp/
+next_backup_folder/
+next_backup_folder
