@@ -50,8 +50,8 @@ const experiences = [
     period: "2025.10 - 2026.03",
     title: "LG 세이커스 마케팅·기획 실무",
     role: "데이터 분석 및 마케팅 기획",
-    desc: "팬 데이터를 기반으로 한 마케팅 전략 수립 및 프로모션 웹페이지 기획 참여. 스포츠 산업 내 데이터 기반 의사결정 프로세스 경험.",
-    tech: ["Data Analysis", "Marketing", "Planning"],
+    desc: "홈경기 관중 데이터 분석을 통한 평일 관중 증대 전략 수립. 요일별 관중 추이 분석 및 타 구단 벤치마킹을 통해 이벤트 좌석, 한정 굿즈 등 프로모션을 제안하여 과제 최우수상을 수상했습니다.",
+    tech: ["Data Analysis", "Marketing", "Strategic Planning"],
   },
   {
     id: 2,
@@ -88,16 +88,46 @@ const projects = [
     title: "AI Powered Study Room",
     desc: "AI 학습 타이머와 실시간 화상 스터디 플랫폼",
     image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop",
-    tags: ["Next.js", "Supabase", "AI API"],
+    tags: ["Next.js", "Supabase", "AI API", "WebRTC"],
     link: "https://study-room-taupe.vercel.app/",
+    details: {
+      overview: "혼자 하는 취업 준비의 고립감을 해소하고, 친구들과 서로의 학습을 실시간으로 독려하며 '순공 시간'을 객관적으로 측정하기 위해 기획된 AI 기반 협업 스터디 플랫폼입니다.",
+      tech: ["Next.js", "TypeScript", "Supabase", "TensorFlow.js", "WebRTC", "Tailwind CSS"],
+      analysis: [
+        { label: "동기 부여의 부재", content: "혼자 공부할 때 쉽게 나태해지는 문제를 상호 감시 시스템으로 해결" },
+        { label: "객관적 시간 측정", content: "단순히 켜놓는 시간이 아닌, 실제 집중 시간(순공 시간) 측정의 필요성" },
+        { label: "실시간 연결성", content: "화상 공유를 통한 현장감 있는 스터디 환경 구축" }
+      ],
+      strategy: [
+        { title: "AI 집중도 탐지", desc: "TensorFlow.js 기반 안면 인식 기술로 학습자의 부재나 졸음을 감지하여 타이머 자동 제어" },
+        { title: "실시간 피어 모니터링", desc: "WebRTC 기술을 활용해 친구들과 서로의 공부하는 모습을 실시간으로 공유하며 상호 감시" },
+        { title: "게이미피케이션 요소", desc: "친구들 간의 순공 시간 랭킹 시스템을 도입하여 선의의 경쟁 유도" }
+      ],
+      outcome: "친구들과의 실무 테스트 결과, 평균 집중 시간이 이전 대비 40% 이상 향상되었으며, 데이터 기반의 정확한 학습 기록 관리가 가능해졌습니다."
+    }
   },
   {
     id: 2,
-    title: "LG Sakers Fan Analytics",
-    desc: "구단 마케팅 데이터를 시각화한 대시보드 프로젝트",
-    image: "https://images.unsplash.com/photo-1542259646-cd4d97e28c46?q=80&w=2070&auto=format&fit=crop",
-    tags: ["Data Viz", "Chart.js", "Marketing"],
+    title: "LG Sakers Marketing Strategy",
+    desc: "데이터 분석 기반 홈경기 관중 증대 전략",
+    image: "/profile.jpeg", // Replace with a relevant image if available, or keep existing
+    tags: ["Data Analysis", "Marketing", "Strategy"],
     link: "https://soonchul12.github.io/lg_sakers/",
+    details: {
+      overview: "LG 세이커스 마케팅 실무 과정 중 진행한 데이터 기반 관중 증대 전략 프로젝트입니다.",
+      tech: ["Excel", "Python", "Tableau", "PowerPoint"],
+      analysis: [
+        { label: "관중 추이 분석", content: "날짜별 홈 관중수 데이터 시각화 및 추이 분석" },
+        { label: "요일별 비교", content: "주말과 평일 관중수 격차 분석 및 유입 원인 파악" },
+        { label: "벤치마킹", content: "타 구단 평일 프로모션 사례 조사 및 스터디 케이스 구축" }
+      ],
+      strategy: [
+        { title: "이벤트 좌석", desc: "평일 전용 프리미엄 체험형 좌석 기획" },
+        { title: "한정판 굿즈", desc: "평일 방문 관중 대상 리미티드 에디션 굿즈 제작" },
+        { title: "팝업 스토어", desc: "경기장 내 유휴 공간을 활용한 테마형 팝업 스토어 운영" }
+      ],
+      outcome: "예상 수익 지표 산출을 통해 전략의 타당성을 입증하였으며, 실무 과제 최우수상을 수상하였습니다."
+    }
   },
   {
     id: 3,
@@ -139,12 +169,139 @@ function MarqueeScroller({ items, duration = 15 }: { items: string[]; duration?:
   );
 }
 
+// --- 프로젝트 상세 모달 ---
+function ProjectDetailModal({ project, isOpen, onClose }: { project: any; isOpen: boolean; onClose: () => void }) {
+  if (!project || !project.details) return null;
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          className="fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <div className="absolute inset-0 bg-black/90 backdrop-blur-2xl" onClick={onClose} />
+          <motion.div
+            initial={{ y: 50, opacity: 0, scale: 0.95 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 50, opacity: 0, scale: 0.95 }}
+            className="relative w-full max-w-5xl max-h-[90vh] bento-card !overflow-y-auto p-6 md:p-12 no-scrollbar"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* 닫기 버튼 */}
+            <button 
+              onClick={onClose}
+              className="absolute top-6 right-6 p-3 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors z-20"
+            >
+              <div className="w-6 h-6 flex items-center justify-center">
+                <div className="absolute w-6 h-0.5 bg-white rotate-45" />
+                <div className="absolute w-6 h-0.5 bg-white -rotate-45" />
+              </div>
+            </button>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              {/* 왼쪽: 이미지 및 기본 정보 */}
+              <div>
+                <div className="aspect-video rounded-3xl overflow-hidden border border-white/10 mb-8">
+                  <img src={project.image} className="w-full h-full object-cover" alt={project.title} />
+                </div>
+                <div className="flex gap-2 mb-6 flex-wrap">
+                  {project.tags.map((tag: string) => (
+                    <span key={tag} className="text-xs font-mono text-accent-purple px-3 py-1 rounded-full border border-accent-purple/30 bg-accent-purple/5">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <h2 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter mb-6">{project.title}</h2>
+                <p className="text-gray-400 text-lg leading-relaxed mb-8">{project.details.overview}</p>
+                
+                <div className="space-y-4">
+                  <h4 className="text-sm font-bold text-gray-500 uppercase tracking-widest">Tech Stack</h4>
+                  <div className="flex gap-3 flex-wrap">
+                    {project.details.tech.map((t: string) => (
+                      <span key={t} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm font-medium">{t}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* 오른쪽: 상세 분석 및 전략 */}
+              <div className="space-y-12">
+                {/* 분석 섹션 */}
+                <section>
+                  <h4 className="text-accent-purple font-bold text-sm uppercase tracking-widest mb-6 flex items-center gap-2">
+                    <Activity className="w-4 h-4" /> Problem & Analysis
+                  </h4>
+                  <div className="grid gap-4">
+                    {project.details.analysis.map((item: any, idx: number) => (
+                      <div key={idx} className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                        <p className="text-xs text-accent-blue font-bold mb-1">{item.label}</p>
+                        <p className="text-sm text-gray-300">{item.content}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* 전략/기능 섹션 */}
+                <section>
+                  <h4 className="text-accent-purple font-bold text-sm uppercase tracking-widest mb-6 flex items-center gap-2">
+                    <Rocket className="w-4 h-4" /> Solution & Features
+                  </h4>
+                  <div className="space-y-6">
+                    {project.details.strategy.map((item: any, idx: number) => (
+                      <div key={idx} className="flex gap-4">
+                        <div className="w-12 h-12 shrink-0 rounded-2xl bg-accent-purple/10 flex items-center justify-center text-accent-purple font-bold">
+                          0{idx + 1}
+                        </div>
+                        <div>
+                          <h5 className="font-bold text-lg mb-1">{item.title}</h5>
+                          <p className="text-sm text-gray-500">{item.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* 성과 섹션 */}
+                <section className="p-8 rounded-[2rem] bg-gradient-to-br from-accent-purple/20 to-accent-blue/20 border border-white/10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 rounded-lg bg-white/10">
+                      <Sparkles className="w-5 h-5 text-yellow-400" />
+                    </div>
+                    <h4 className="font-bold uppercase tracking-tighter">Key Outcome</h4>
+                  </div>
+                  <p className="text-lg font-medium leading-relaxed italic">&quot;{project.details.outcome}&quot;</p>
+                </section>
+
+                {/* 링크 버튼 */}
+                <MagneticButton className="w-full">
+                  <a 
+                    href={project.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center justify-center gap-3 w-full py-6 rounded-3xl bg-white text-black font-black uppercase hover:bg-gray-200 transition-colors shadow-2xl"
+                  >
+                    Visit Live Project <ExternalLink className="w-5 h-5" />
+                  </a>
+                </MagneticButton>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 export default function Portfolio() {
   const targetRef = useRef(null);
   const mousePosition = useMousePosition();
   const [windowSize, setWindowSize] = useState({ w: 1920, h: 1080 });
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState("");
+  const [selectedProject, setSelectedProject] = useState<any>(null);
 
   useEffect(() => {
     setWindowSize({ w: window.innerWidth, h: window.innerHeight });
@@ -165,9 +322,24 @@ export default function Portfolio() {
     };
   }, []);
 
+  // 모달 오픈 시 바디 스크롤 방지
+  useEffect(() => {
+    if (isContactOpen || selectedProject) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [isContactOpen, selectedProject]);
+
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white selection:bg-accent-purple selection:text-white overflow-x-hidden font-sans grain">
       
+      <ProjectDetailModal 
+        project={selectedProject} 
+        isOpen={!!selectedProject} 
+        onClose={() => setSelectedProject(null)} 
+      />
+
       {/* 0. 프리미엄 배경 레이어 */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute top-[10%] left-[5%] w-[50vw] h-[50vw] bg-accent-purple/10 rounded-full blur-[120px] animate-pulse" />
@@ -298,16 +470,20 @@ export default function Portfolio() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {projects.map((project, i) => (
-            <motion.a
+            <motion.div
               key={project.id}
-              href={project.link}
-              target="_blank"
-              rel="noreferrer"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="group block"
+              className="group cursor-pointer"
+              onClick={() => {
+                if (project.details) {
+                  setSelectedProject(project);
+                } else {
+                  window.open(project.link, "_blank");
+                }
+              }}
             >
               <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-white/10 mb-6 transition-transform duration-700 group-hover:scale-[1.02]">
                 <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10 opacity-60" />
@@ -322,10 +498,11 @@ export default function Portfolio() {
                   </div>
                 </div>
               </div>
-            </motion.a>
+            </motion.div>
           ))}
         </div>
       </section>
+
 
       {/* 6. 경력 (Experience) - 세련된 수직 리스트 */}
       <section className="relative z-10 py-32 px-6 max-w-4xl mx-auto">
