@@ -97,7 +97,7 @@ const projects = [
     desc: "구단 마케팅 데이터를 시각화한 대시보드 프로젝트",
     image: "https://images.unsplash.com/photo-1542259646-cd4d97e28c46?q=80&w=2070&auto=format&fit=crop",
     tags: ["Data Viz", "Chart.js", "Marketing"],
-    link: "#",
+    link: "https://soonchul12.github.io/lg_sakers/",
   },
   {
     id: 3,
@@ -298,13 +298,16 @@ export default function Portfolio() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {projects.map((project, i) => (
-            <motion.div
+            <motion.a
               key={project.id}
+              href={project.link}
+              target="_blank"
+              rel="noreferrer"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="group cursor-pointer"
+              className="group block"
             >
               <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-white/10 mb-6 transition-transform duration-700 group-hover:scale-[1.02]">
                 <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10 opacity-60" />
@@ -319,7 +322,7 @@ export default function Portfolio() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </motion.a>
           ))}
         </div>
       </section>
