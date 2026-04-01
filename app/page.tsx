@@ -48,24 +48,23 @@ const experiences = [
   {
     id: 1,
     period: "2025.10 - 2026.03",
-    title: "LG 세이커스 마케팅·기획 실무",
+    title: "LG 세이커스 프로농구단 마케팅 실무",
     role: "데이터 분석 및 마케팅 기획",
-    desc: "홈경기 관중 데이터 분석을 통한 평일 관중 증대 전략 수립. 요일별 관중 추이 분석 및 타 구단 벤치마킹을 통해 이벤트 좌석, 한정 굿즈 등 프로모션을 제안하여 과제 최우수상을 수상했습니다.",
-    tech: ["Data Analysis", "Marketing", "Strategic Planning"],
+    desc: "홈경기 관중 데이터를 분석하여 평일 관중 증대를 위한 실질적인 전략을 수립했습니다. 요일별 관중 추이 분석과 타 구단 사례 조사를 바탕으로 이벤트 좌석, 한정판 굿즈 등 프로모션을 제안하여 최우수상을 수상했습니다.",
+    tech: ["데이터 분석", "마케팅 전략", "성과 지표 수립"],
   },
   {
     id: 2,
     period: "2024.06 - 2024.11",
-    title: "스타트업 프론트엔드 개발",
-    role: "Frontend Developer",
-    desc: "초기 단계 스타트업에서 웹 서비스 UI/UX 구현 및 API 연동 담당. 애자일 환경에서의 협업 및 서비스 배포 경험.",
-    tech: ["React", "TypeScript", "Tailwind CSS"],
+    title: "IT 스타트업 서비스 개발",
+    role: "프론트엔드 개발 및 UI/UX 설계",
+    desc: "초기 단계 스타트업에서 웹 서비스의 UI/UX 구현과 API 연동을 담당했습니다. 사용자 경험 중심의 인터페이스를 설계하고, 애자일 환경에서 빠르게 기능을 배포하며 서비스 성장에 기여했습니다.",
+    tech: ["React", "TypeScript", "UI/UX 디자인"],
   },
 ];
 
 const marqueeSkills = [
-  "React", "TypeScript", "Next.js", "AI Tools", "Tailwind CSS",
-  "UX Design", "Marketing", "Web Development", "JavaScript"
+  "Data Analysis", "Marketing Strategy", "UX Design", "React", "Next.js", "AI Utilization", "Performance Marketing", "Web Development", "Problem Solving"
 ];
 
 const CONTACT_INFO = {
@@ -78,64 +77,79 @@ const TECH_STACK = [
   { name: "TypeScript", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" },
   { name: "Next.js", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" },
   { name: "Tailwind", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" },
-  { name: "Node.js", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" },
-  { name: "Git", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" },
+  { name: "데이터분석", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
+  { name: "디자인", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg" },
 ];
 
 const projects = [
   {
     id: 1,
-    title: "AI Powered Study Room",
-    desc: "AI 학습 타이머와 실시간 화상 스터디 플랫폼",
+    title: "AI 기반 지능형 스터디룸",
+    desc: "AI 학습 타이머와 실시간 소통을 결합한 스터디 플랫폼",
     image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop",
-    tags: ["Next.js", "Supabase", "AI API", "WebRTC"],
+    tags: ["서비스 기획", "AI 연동", "사용자 분석"],
     link: "https://study-room-taupe.vercel.app/",
     details: {
-      overview: "혼자 하는 취업 준비의 고립감을 해소하고, 친구들과 서로의 학습을 실시간으로 독려하며 '순공 시간'을 객관적으로 측정하기 위해 기획된 AI 기반 협업 스터디 플랫폼입니다.",
-      tech: ["Next.js", "TypeScript", "Supabase", "TensorFlow.js", "WebRTC", "Tailwind CSS"],
+      overview: "혼자 공부할 때의 고립감을 해결하고, 데이터로 학습 집중도를 측정하여 사용자들의 '순공 시간'을 관리해주는 AI 기반 협업 스터디 플랫폼입니다.",
+      tech: ["Next.js", "TensorFlow.js", "WebRTC", "Supabase"],
       analysis: [
-        { label: "동기 부여의 부재", content: "혼자 공부할 때 쉽게 나태해지는 문제를 상호 감시 시스템으로 해결" },
-        { label: "객관적 시간 측정", content: "단순히 켜놓는 시간이 아닌, 실제 집중 시간(순공 시간) 측정의 필요성" },
-        { label: "실시간 연결성", content: "화상 공유를 통한 현장감 있는 스터디 환경 구축" }
+        { label: "사용자 니즈 파악", content: "혼자 공부할 때 나태해지는 문제를 상호 감시와 데이터 측정으로 해결하고자 함" },
+        { label: "객관적 지표 설정", content: "단순 접속 시간이 아닌, 실제 화면 앞 집중 시간(순공 시간) 측정의 필요성" },
+        { label: "커뮤니티 형성", content: "화상 공유를 통해 스터디 카페와 같은 현장감 있는 환경 구축" }
       ],
       strategy: [
-        { title: "AI 집중도 탐지", desc: "TensorFlow.js 기반 안면 인식 기술로 학습자의 부재나 졸음을 감지하여 타이머 자동 제어" },
-        { title: "실시간 피어 모니터링", desc: "WebRTC 기술을 활용해 친구들과 서로의 공부하는 모습을 실시간으로 공유하며 상호 감시" },
-        { title: "게이미피케이션 요소", desc: "친구들 간의 순공 시간 랭킹 시스템을 도입하여 선의의 경쟁 유도" }
+        { title: "AI 집중도 분석", desc: "얼굴 인식 기술로 사용자의 부재나 졸음을 실시간 감지하여 데이터 신뢰성 확보" },
+        { title: "데이터 시각화", desc: "개인별 학습 통계를 그래프로 제공하여 성취감 고취 및 재방문 유도" },
+        { title: "상호 작용 설계", desc: "친구들과 실시간으로 공부 모습을 공유하며 선의의 경쟁을 유도하는 시스템" }
       ],
-      outcome: "친구들과의 실무 테스트 결과, 평균 집중 시간이 이전 대비 40% 이상 향상되었으며, 데이터 기반의 정확한 학습 기록 관리가 가능해졌습니다."
+      outcome: "실제 사용자 테스트 결과, 평균 집중 시간이 40% 이상 향상되었으며, 데이터 기반의 체계적인 학습 관리가 가능해졌습니다."
     }
   },
   {
     id: 2,
-    title: "LG Sakers Marketing Strategy",
-    desc: "데이터 분석 기반 홈경기 관중 증대 전략",
-    image: "/profile.jpeg", // Replace with a relevant image if available, or keep existing
-    tags: ["Data Analysis", "Marketing", "Strategy"],
+    title: "LG 세이커스 마케팅 전략",
+    desc: "데이터 분석을 통한 프로농구 관중 증대 프로젝트",
+    image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=2090&auto=format&fit=crop",
+    tags: ["데이터 분석", "콘텐츠 마케팅", "성과 지표"],
     link: "https://soonchul12.github.io/lg_sakers/",
     details: {
-      overview: "LG 세이커스 마케팅 실무 과정 중 진행한 데이터 기반 관중 증대 전략 프로젝트입니다.",
-      tech: ["Excel", "Python", "Tableau", "PowerPoint"],
+      overview: "LG 세이커스 마케팅 실무 과정에서 진행한 데이터 기반 관중 유입 전략 수립 프로젝트입니다.",
+      tech: ["Excel", "Python", "Tableau", "데이터 시각화"],
       analysis: [
-        { label: "관중 추이 분석", content: "날짜별 홈 관중수 데이터 시각화 및 추이 분석" },
-        { label: "요일별 비교", content: "주말과 평일 관중수 격차 분석 및 유입 원인 파악" },
-        { label: "벤치마킹", content: "타 구단 평일 프로모션 사례 조사 및 스터디 케이스 구축" }
+        { label: "관중 패턴 분석", content: "홈경기 일자별 관중수 데이터를 시각화하여 요일별/상대팀별 유입 패턴 파악" },
+        { label: "이탈 원인 분석", content: "평일 관중수가 주말 대비 급감하는 핵심 원인(직장인/학생 접근성 등) 분석" },
+        { label: "시장 트렌드 조사", content: "타 스포츠 구단의 성공적인 평일 프로모션 사례를 벤치마킹하여 스터디" }
       ],
       strategy: [
-        { title: "이벤트 좌석", desc: "평일 전용 프리미엄 체험형 좌석 기획" },
-        { title: "한정판 굿즈", desc: "평일 방문 관중 대상 리미티드 에디션 굿즈 제작" },
-        { title: "팝업 스토어", desc: "경기장 내 유휴 공간을 활용한 테마형 팝업 스토어 운영" }
+        { title: "체험형 프로모션", desc: "평일 퇴근길 직장인을 타겟으로 한 전용 프리미엄 체험 좌석 기획" },
+        { title: "희소성 기반 마케팅", desc: "평일 관중에게만 제공되는 한정판 굿즈 마케팅을 통해 방문 동기 부여" },
+        { title: "공간 마케팅", desc: "경기장 내 유휴 공간을 팝업 스토어로 활용하여 MZ세대의 방문 경험 강화" }
       ],
-      outcome: "예상 수익 지표 산출을 통해 전략의 타당성을 입증하였으며, 실무 과제 최우수상을 수상하였습니다."
+      outcome: "예상 수익 및 관중 증대 지표를 수치로 산출하여 전략의 타당성을 입증했고, 최종 과제 최우수상을 수상했습니다."
     }
   },
   {
     id: 3,
-    title: "Baseball Player Records",
-    desc: "사회인 야구팀 선수 기록 저장·관리용 웹",
-    image: "https://images.unsplash.com/photo-1515703406961-3a0f274a7386?q=80&w=2070&auto=format&fit=crop",
-    tags: ["Next.js", "Team Stats"],
-    link: "https://baseball-zeta.vercel.app/",
+    title: "라멘피디아 (Ramen Pedia)",
+    desc: "취향 기반 추천과 검색이 결합된 라면 큐레이션 서비스",
+    image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=2080&auto=format&fit=crop",
+    tags: ["UX 디자인", "검색 최적화", "사용자 경험"],
+    link: "https://ramen-pedia.vercel.app/",
+    details: {
+      overview: "수많은 라면 중 사용자의 취향에 맞는 제품을 쉽고 빠르게 찾을 수 있도록 돕는 라면 전문 도감 및 추천 서비스입니다.",
+      tech: ["Next.js", "TypeScript", "Tailwind CSS", "React Query"],
+      analysis: [
+        { label: "정보 탐색 비용", content: "다양한 브랜드와 종류로 인해 원하는 제품을 찾기 힘든 페인 포인트 발견" },
+        { label: "기록의 가치", content: "자신이 먹어본 제품을 기록하고 싶은 사용자 니즈를 '도감' 형태로 기획" },
+        { label: "추천 알고리즘", content: "맵기, 국물 종류 등 사용자 선호도에 따른 추천 흐름 설계" }
+      ],
+      strategy: [
+        { title: "검색 경험 최적화", desc: "검색어와 다중 필터를 조합해 최소한의 클릭으로 결과에 도달하는 UX 설계" },
+        { title: "사용자 참여 유도", desc: "별점과 북마크 기능을 통해 사용자가 직접 자신의 데이터를 쌓아가는 재미 제공" },
+        { title: "시각적 큐레이션", desc: "제품의 특징을 한눈에 파악할 수 있는 카드 형태의 UI와 카테고리 분류" }
+      ],
+      outcome: "탐색부터 저장, 추천까지 이어지는 흐름을 단일 화면 경험으로 구축하여 사용자 편의성을 극대화했습니다."
+    }
   },
 ];
 
@@ -218,7 +232,7 @@ function ProjectDetailModal({ project, isOpen, onClose }: { project: any; isOpen
                 <p className="text-gray-400 text-lg leading-relaxed mb-8">{project.details.overview}</p>
                 
                 <div className="space-y-4">
-                  <h4 className="text-sm font-bold text-gray-500 uppercase tracking-widest">Tech Stack</h4>
+                  <h4 className="text-sm font-bold text-gray-500 uppercase tracking-widest">사용 기술</h4>
                   <div className="flex gap-3 flex-wrap">
                     {project.details.tech.map((t: string) => (
                       <span key={t} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm font-medium">{t}</span>
@@ -232,7 +246,7 @@ function ProjectDetailModal({ project, isOpen, onClose }: { project: any; isOpen
                 {/* 분석 섹션 */}
                 <section>
                   <h4 className="text-accent-purple font-bold text-sm uppercase tracking-widest mb-6 flex items-center gap-2">
-                    <Activity className="w-4 h-4" /> Problem & Analysis
+                    <Activity className="w-4 h-4" /> 문제 정의 및 분석
                   </h4>
                   <div className="grid gap-4">
                     {project.details.analysis.map((item: any, idx: number) => (
@@ -247,7 +261,7 @@ function ProjectDetailModal({ project, isOpen, onClose }: { project: any; isOpen
                 {/* 전략/기능 섹션 */}
                 <section>
                   <h4 className="text-accent-purple font-bold text-sm uppercase tracking-widest mb-6 flex items-center gap-2">
-                    <Rocket className="w-4 h-4" /> Solution & Features
+                    <Rocket className="w-4 h-4" /> 해결 전략 및 주요 기능
                   </h4>
                   <div className="space-y-6">
                     {project.details.strategy.map((item: any, idx: number) => (
@@ -270,7 +284,7 @@ function ProjectDetailModal({ project, isOpen, onClose }: { project: any; isOpen
                     <div className="p-2 rounded-lg bg-white/10">
                       <Sparkles className="w-5 h-5 text-yellow-400" />
                     </div>
-                    <h4 className="font-bold uppercase tracking-tighter">Key Outcome</h4>
+                    <h4 className="font-bold uppercase tracking-tighter">핵심 성과</h4>
                   </div>
                   <p className="text-lg font-medium leading-relaxed italic">&quot;{project.details.outcome}&quot;</p>
                 </section>
@@ -283,7 +297,7 @@ function ProjectDetailModal({ project, isOpen, onClose }: { project: any; isOpen
                     rel="noreferrer"
                     className="flex items-center justify-center gap-3 w-full py-6 rounded-3xl bg-white text-black font-black uppercase hover:bg-gray-200 transition-colors shadow-2xl"
                   >
-                    Visit Live Project <ExternalLink className="w-5 h-5" />
+                    프로젝트 방문하기 <ExternalLink className="w-5 h-5" />
                   </a>
                 </MagneticButton>
               </div>
@@ -348,9 +362,9 @@ export default function Portfolio() {
 
       {/* 1. 플로팅 내비게이션 (Glassmorphic) */}
       <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full border border-white/10 bg-black/40 backdrop-blur-2xl flex items-center gap-8">
-        <span className="text-sm font-bold text-gradient">SOONCHUL.DEV</span>
+        <span className="text-sm font-bold text-gradient">KWON SOONCHUL</span>
         <div className="flex gap-6 items-center">
-          <button onClick={() => setIsContactOpen(true)} className="text-xs font-medium text-gray-400 hover:text-white transition-colors">Contact</button>
+          <button onClick={() => setIsContactOpen(true)} className="text-xs font-medium text-gray-400 hover:text-white transition-colors">연락하기</button>
           <a href="https://github.com/soonchul12" target="_blank" className="text-gray-400 hover:text-white transition-colors"><Github className="w-4 h-4" /></a>
         </div>
       </nav>
@@ -363,15 +377,16 @@ export default function Portfolio() {
           className="text-center mb-16"
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs font-medium text-accent-purple mb-6">
-            <Activity className="w-3 h-3" /> Available for new challenges
+            <Activity className="w-3 h-3" /> 비즈니스 가치를 만드는 개발자 & 마케터
           </div>
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-none mb-8">
-            CRAFTING <br />
-            <span className="text-gradient">AI DRIVEN</span> WEB
+          <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-none mb-8 uppercase">
+            GROWTH INSIGHT <br />
+            <span className="text-white/20">&</span> <br />
+            <span className="text-gradient">SOLID CODE</span>
           </h1>
           <p className="text-gray-400 text-lg max-w-xl mx-auto mb-10">
-            데이터와 디자인을 연결하는 프론트엔드 개발자 권순철입니다. <br />
-            AI 도구를 통해 더 빠르고 정교한 사용자 경험을 설계합니다.
+            데이터 분석 기반의 마케팅 통찰력과 탄탄한 개발 실력을 결합하여 <br />
+            사용자와 비즈니스가 모두 만족하는 웹 서비스를 만듭니다.
           </p>
           
           <div className="flex gap-4 justify-center">
@@ -380,7 +395,7 @@ export default function Portfolio() {
                 onClick={() => setIsContactOpen(true)}
                 className="px-8 py-4 rounded-2xl bg-white text-black font-bold flex items-center gap-2 hover:bg-gray-200 transition-colors shadow-2xl"
               >
-                Hire Me <ChevronRight className="w-4 h-4" />
+                협업 제안 <ChevronRight className="w-4 h-4" />
               </button>
             </MagneticButton>
             <MagneticButton>
@@ -388,7 +403,7 @@ export default function Portfolio() {
                 href="#projects"
                 className="px-8 py-4 rounded-2xl border border-white/10 bg-white/5 font-bold hover:bg-white/10 transition-colors"
               >
-                View Work
+                프로젝트 보기
               </a>
             </MagneticButton>
           </div>
@@ -399,10 +414,10 @@ export default function Portfolio() {
           {/* Profile Card */}
           <motion.div whileHover={{ y: -5 }} className="bento-card md:col-span-2 p-8 flex items-end justify-between group">
             <div className="relative z-10">
-              <h3 className="text-2xl font-bold mb-2 italic">About Me</h3>
+              <h3 className="text-2xl font-bold mb-2 italic uppercase">About Me</h3>
               <p className="text-sm text-gray-400 leading-relaxed max-w-sm">
-                스포츠 산업의 데이터와 스타트업의 유연함을 경험했습니다. <br />
-                단순한 코딩을 넘어, 비즈니스 가치를 만드는 개발을 지향합니다.
+                스포츠 구단의 마케팅 데이터와 스타트업의 개발 문화를 모두 경험했습니다. <br />
+                단순한 구현을 넘어, 지표를 개선하고 가치를 창출하는 개발을 지향합니다.
               </p>
             </div>
             <div className="absolute top-0 right-0 w-48 h-48 opacity-20 group-hover:opacity-40 transition-opacity">
@@ -420,11 +435,11 @@ export default function Portfolio() {
             </div>
             <div className="mt-4">
               <p className="text-[10px] uppercase text-gray-500 mb-1">Current Focus</p>
-              <p className="text-sm font-bold font-mono">Next.js 16 & <br />Mastra AI Agent</p>
+              <p className="text-sm font-bold">데이터 분석 모델링 & <br />AI 에이전트 개발</p>
             </div>
             <div className="mt-4 flex items-center gap-2">
               <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-[10px] text-gray-400 font-mono tracking-widest">THINKING...</span>
+              <span className="text-[10px] text-gray-400 font-mono tracking-widest">실행 중...</span>
             </div>
           </motion.div>
 
@@ -435,14 +450,14 @@ export default function Portfolio() {
               <span className="text-lg font-mono font-bold">{currentTime}</span>
             </div>
             <div>
-              <p className="text-[10px] uppercase text-gray-500 mb-1">Base</p>
-              <p className="text-sm font-bold">Seoul, South Korea</p>
+              <p className="text-[10px] uppercase text-gray-500 mb-1">Location</p>
+              <p className="text-sm font-bold">대한민국, 서울</p>
             </div>
           </motion.div>
 
           {/* Tech Stack Horizontal Scroll (Bento Item) */}
           <div className="md:col-span-4 bento-card py-6 px-8 flex items-center justify-between">
-            <span className="text-xs font-bold text-gray-500">EXPERTISE</span>
+            <span className="text-xs font-bold text-gray-500 uppercase">Expertise</span>
             <div className="flex gap-6 overflow-x-auto pb-2 no-scrollbar">
               {TECH_STACK.map((tech) => (
                 <div key={tech.name} className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/5 bg-white/5">
@@ -494,7 +509,7 @@ export default function Portfolio() {
                   </div>
                   <h3 className="text-2xl font-bold mb-1">{project.title}</h3>
                   <div className="overflow-hidden h-0 group-hover:h-8 transition-all duration-500">
-                    <p className="text-xs text-gray-300 flex items-center gap-1">View Project Details <ExternalLink className="w-3 h-3" /></p>
+                    <p className="text-xs text-gray-300 flex items-center gap-1">상세 내용 보기 <ExternalLink className="w-3 h-3" /></p>
                   </div>
                 </div>
               </div>
@@ -506,7 +521,7 @@ export default function Portfolio() {
 
       {/* 6. 경력 (Experience) - 세련된 수직 리스트 */}
       <section className="relative z-10 py-32 px-6 max-w-4xl mx-auto">
-        <h2 className="text-sm font-bold text-gray-500 mb-16 tracking-widest text-center">JOURNEY SO FAR</h2>
+        <h2 className="text-sm font-bold text-gray-500 mb-16 tracking-widest text-center uppercase">Experience</h2>
         <div className="space-y-16">
           {experiences.map((exp) => (
             <div key={exp.id} className="grid grid-cols-1 md:grid-cols-4 gap-8 group">
@@ -528,18 +543,18 @@ export default function Portfolio() {
       <footer className="relative z-10 py-32 text-center">
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="text-6xl md:text-8xl font-black tracking-tighter italic uppercase mb-12">
-            Let&apos;s build <br /> something <span className="text-gradient underline decoration-accent-purple underline-offset-8">epic</span>
+            함께 새로운 <br /> 가치를 <span className="text-gradient underline decoration-accent-purple underline-offset-8">만들어봐요</span>
           </h2>
           <MagneticButton className="inline-block">
             <button 
               onClick={() => setIsContactOpen(true)}
               className="px-12 py-6 rounded-3xl bg-white text-black text-xl font-black uppercase hover:scale-110 transition-transform shadow-[0_0_50px_rgba(255,255,255,0.2)]"
             >
-              Contact Me
+              연락하기
             </button>
           </MagneticButton>
           <div className="mt-32 flex flex-col md:flex-row justify-between items-center border-t border-white/5 pt-12 gap-6">
-            <p className="text-xs text-gray-500">© 2026 SOONCHUL PORTFOLIO</p>
+            <p className="text-xs text-gray-500">© 2026 KWON SOONCHUL PORTFOLIO</p>
             <div className="flex gap-8">
               <a href={`mailto:${CONTACT_INFO.email}`} className="text-xs text-gray-500 hover:text-white transition-colors uppercase font-bold tracking-widest">Email</a>
               <a href="https://github.com/soonchul12" target="_blank" className="text-xs text-gray-500 hover:text-white transition-colors uppercase font-bold tracking-widest">Github</a>
@@ -565,18 +580,18 @@ export default function Portfolio() {
               className="bento-card max-w-md w-full p-12 mx-6 relative"
               onClick={e => e.stopPropagation()}
             >
-              <h3 className="text-4xl font-black italic uppercase mb-8 text-gradient">Get in touch</h3>
+              <h3 className="text-4xl font-black italic uppercase mb-8 text-gradient">연락처</h3>
               <div className="space-y-6">
                 <div>
-                  <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-2">Email Me</p>
+                  <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-2">이메일</p>
                   <a href={`mailto:${CONTACT_INFO.email}`} className="text-xl font-bold hover:text-accent-purple transition-colors">{CONTACT_INFO.email}</a>
                 </div>
                 <div>
-                  <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-2">Call Me</p>
+                  <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-2">전화번호</p>
                   <p className="text-xl font-bold">{CONTACT_INFO.phone}</p>
                 </div>
                 <div className="pt-8">
-                  <button onClick={() => setIsContactOpen(false)} className="w-full py-4 rounded-2xl border border-white/10 hover:bg-white hover:text-black font-bold transition-all uppercase text-xs tracking-widest">Close</button>
+                  <button onClick={() => setIsContactOpen(false)} className="w-full py-4 rounded-2xl border border-white/10 hover:bg-white hover:text-black font-bold transition-all uppercase text-xs tracking-widest">닫기</button>
                 </div>
               </div>
             </motion.div>
