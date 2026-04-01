@@ -1,9 +1,27 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, AnimatePresence, useSpring, useMotionValue } from "framer-motion";
-import { Code, Cpu, Layers, Rocket, ExternalLink, Mail, Github, MapPin, Sparkles, Terminal, Activity, ChevronRight } from "lucide-react";
-import { useMousePosition } from "./hooks/useMousePosition";
+import { motion, AnimatePresence, useSpring, useMotionValue } from "framer-motion";
+import { Rocket, ExternalLink, Github, MapPin, Sparkles, Terminal, Activity, ChevronRight } from "lucide-react";
+
+// --- 타입 정의 ---
+interface ProjectDetails {
+  overview: string;
+  tech: string[];
+  analysis: { label: string; content: string }[];
+  strategy: { title: string; desc: string }[];
+  outcome: string;
+}
+
+interface Project {
+  id: number;
+  title: string;
+  desc: string;
+  image: string;
+  tags: string[];
+  link: string;
+  details: ProjectDetails;
+}
 
 // --- 트렌디한 마그네틱 버튼 컴포넌트 ---
 function MagneticButton({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -81,7 +99,7 @@ const TECH_STACK = [
   { name: "디자인", icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg" },
 ];
 
-const projects = [
+const projects: Project[] = [
   {
     id: 1,
     title: "AI 기반 지능형 스터디룸",
@@ -184,7 +202,7 @@ function MarqueeScroller({ items, duration = 15 }: { items: string[]; duration?:
 }
 
 // --- 프로젝트 상세 모달 ---
-function ProjectDetailModal({ project, isOpen, onClose }: { project: any; isOpen: boolean; onClose: () => void }) {
+function ProjectDetailModal({ project, isOpen, onClose }: { project: Project | null; isOpen: boolean; onClose: () => void }) {
   if (!project || !project.details) return null;
 
   return (
@@ -249,7 +267,7 @@ function ProjectDetailModal({ project, isOpen, onClose }: { project: any; isOpen
                     <Activity className="w-4 h-4" /> 문제 정의 및 분석
                   </h4>
                   <div className="grid gap-4">
-                    {project.details.analysis.map((item: any, idx: number) => (
+                    {project.details.analysis.map((item, idx: number) => (
                       <div key={idx} className="p-4 rounded-2xl bg-white/5 border border-white/10">
                         <p className="text-xs text-accent-blue font-bold mb-1">{item.label}</p>
                         <p className="text-sm text-gray-300">{item.content}</p>
@@ -264,7 +282,7 @@ function ProjectDetailModal({ project, isOpen, onClose }: { project: any; isOpen
                     <Rocket className="w-4 h-4" /> 해결 전략 및 주요 기능
                   </h4>
                   <div className="space-y-6">
-                    {project.details.strategy.map((item: any, idx: number) => (
+                    {project.details.strategy.map((item, idx: number) => (
                       <div key={idx} className="flex gap-4">
                         <div className="w-12 h-12 shrink-0 rounded-2xl bg-accent-purple/10 flex items-center justify-center text-accent-purple font-bold">
                           0{idx + 1}
@@ -310,18 +328,11 @@ function ProjectDetailModal({ project, isOpen, onClose }: { project: any; isOpen
 }
 
 export default function Portfolio() {
-  const targetRef = useRef(null);
-  const mousePosition = useMousePosition();
-  const [windowSize, setWindowSize] = useState({ w: 1920, h: 1080 });
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState("");
-  const [selectedProject, setSelectedProject] = useState<any>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   useEffect(() => {
-    setWindowSize({ w: window.innerWidth, h: window.innerHeight });
-    const onResize = () => setWindowSize({ w: window.innerWidth, h: window.innerHeight });
-    window.addEventListener("resize", onResize);
-    
     // 로컬 시간 업데이트 (트렌디한 시계 효과)
     const updateTime = () => {
       const now = new Date();
@@ -331,7 +342,6 @@ export default function Portfolio() {
     const timer = setInterval(updateTime, 1000 * 60);
     
     return () => {
-      window.removeEventListener("resize", onResize);
       clearInterval(timer);
     };
   }, []);
@@ -421,7 +431,7 @@ export default function Portfolio() {
               </p>
             </div>
             <div className="absolute top-0 right-0 w-48 h-48 opacity-20 group-hover:opacity-40 transition-opacity">
-              <img src="/profile.jpeg" className="w-full h-full object-cover grayscale" />
+              <img src="/profile.jpeg" className="w-full h-full object-cover grayscale" alt="Profile" />
             </div>
           </motion.div>
 
@@ -461,7 +471,7 @@ export default function Portfolio() {
             <div className="flex gap-6 overflow-x-auto pb-2 no-scrollbar">
               {TECH_STACK.map((tech) => (
                 <div key={tech.name} className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/5 bg-white/5">
-                  <img src={tech.icon} className="w-4 h-4" />
+                  <img src={tech.icon} className="w-4 h-4" alt={tech.name} />
                   <span className="text-xs font-medium">{tech.name}</span>
                 </div>
               ))}
@@ -477,10 +487,10 @@ export default function Portfolio() {
       <section id="projects" className="relative z-10 py-32 px-6 max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
           <div>
-            <span className="text-xs font-bold text-accent-purple uppercase tracking-[0.2em] mb-4 block">Selection</span>
-            <h2 className="text-5xl font-black italic uppercase tracking-tighter leading-none">Featured<br />Projects</h2>
+            <span className="text-xs font-bold text-accent-purple uppercase tracking-[0.2em] mb-4 block">Portfolio</span>
+            <h2 className="text-5xl font-black italic uppercase tracking-tighter leading-none">Selected<br />Projects</h2>
           </div>
-          <p className="text-gray-500 text-sm max-w-[280px]">사용자의 문제 해결과 비즈니스 성장을 고려한 엄선된 결과물입니다.</p>
+          <p className="text-gray-500 text-sm max-w-[280px]">사용자 문제 해결과 비즈니스 성장을 고려한 결과물입니다.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -502,7 +512,7 @@ export default function Portfolio() {
             >
               <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-white/10 mb-6 transition-transform duration-700 group-hover:scale-[1.02]">
                 <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent z-10 opacity-60" />
-                <img src={project.image} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <img src={project.image} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={project.title} />
                 <div className="absolute inset-x-0 bottom-0 p-8 z-20">
                   <div className="flex gap-2 mb-3">
                     {project.tags.map(t => <span key={t} className="text-[10px] px-2 py-1 rounded-full border border-white/20 backdrop-blur-md">{t}</span>)}
